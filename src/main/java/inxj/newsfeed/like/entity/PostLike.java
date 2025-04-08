@@ -1,11 +1,12 @@
 package inxj.newsfeed.like.entity;
 
+import inxj.newsfeed.common.entity.BaseEntity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-public class PostLike {
+public class PostLike extends BaseEntity {
 
     @EmbeddedId
     private PostLikeId id;
@@ -21,7 +22,5 @@ public class PostLike {
     @MapsId("userId")
     @JoinColumn(name = "user_id")
     private User user;
-
-    private LocalDateTime createdAt;
 
 }
