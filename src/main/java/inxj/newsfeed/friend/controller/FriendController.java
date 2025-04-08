@@ -71,4 +71,19 @@ public class FriendController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /*
+    친구 요청 거절 API
+     */
+    @PostMapping("/friend-request/reject/{userId}")
+    public ResponseEntity<Void> rejectRequest(HttpServletRequest request, @PathVariable Long userId){
+        // 로그인한 유저의 id 뽑아오기
+        Long loginedUserId = (Long) request.getAttribute("userId");
+
+        // 로그인한 유저의 id와 요청 거절할 유저의 id를 서비스 레이어에 전달
+        friendService.rejectRequest(loginedUserId, userId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
 }
