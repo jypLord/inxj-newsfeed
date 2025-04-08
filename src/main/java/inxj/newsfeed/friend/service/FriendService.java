@@ -6,6 +6,7 @@ import inxj.newsfeed.friend.repository.FriendRepository;
 import inxj.newsfeed.user.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,8 +21,10 @@ public class FriendService {
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
 
-    // Todo: user가 null인 경우(NoSuchElementException) 404 Not Found로 예외처리
-    // Todo: 각 API의 조건문에 해당하지 않는 경우 어떻게 처리할건지(예외? 아님 무시)
+    // Todo: 예외처리
+    // Todo: NoSuchElementException -> 404 Not Found / "조회한 데이터가 존재하지 않습니다."
+    // Todo: NotFriendException -> 400 Bad Request / "해당 유저와 친구 관계가 아닙니다."
+    // Todo: AlreadyProcessedException -> 409 Conflict / "이미 처리된 요청입니다."
 
     /*
     친구 목록 조회 API
@@ -60,9 +63,12 @@ public class FriendService {
         // 두 사용자가 requester or receiver인 friendRequest 반환
         FriendRequest foundFriendRequest = friendRepository.findInteractiveRequest(loginedUser, friend).orElseThrow(NoSuchElementException::new);
 
-        // Status가 Accept 상태인 경우 DELETED로 변경
+        // Status가 Accept인 경우 DELETED로 변경
         if (foundFriendRequest.getStatus() == ACCEPT) {
             foundFriendRequest.setStatus(DELETED);
+        }else{
+            // Status가 Accept가 아닌 경우 예외 발생
+            throw new NotFriendException();
         }
     }
 
@@ -85,6 +91,9 @@ public class FriendService {
         else if (friendRepository.findInteractiveRequest(receiver, requester).get().getStatus() == REJECT
                 || friendRepository.findInteractiveRequest(receiver, requester).get().getStatus() == DELETED) {
             friendRepository.findInteractiveRequest(receiver, requester).get().setStatus(PENDING);
+        }else{
+            // Status가 PENDING or ACCEPT인 경우 예외 발생
+            throw new AlreadyProcessedException();
         }
     }
 
@@ -106,6 +115,9 @@ public class FriendService {
         // Status가 PENDING 상태인 경우 ACCEPT로 변경
         if (foundFriendRequest.getStatus() == PENDING) {
             foundFriendRequest.setStatus(ACCEPT);
+        }else {
+            // Status가 PENDING이 아닌 경우 예외 발생(이미 요청을 거절, 수락하거나 친구 삭제한 경우)
+            throw new AlreadyProcessedException();
         }
     }
 
@@ -127,6 +139,9 @@ public class FriendService {
         // Status가 PENDING 상태인 경우 REJECT로 변경
         if (foundFriendRequest.getStatus() == PENDING) {
             foundFriendRequest.setStatus(REJECT);
+        }else{
+            // Status가 PENDING이 아닌 경우 예외 발생(이미 요청을 거절, 수락하거나 친구 삭제한 경우)
+            throw new AlreadyProcessedException();
         }
     }
 }
