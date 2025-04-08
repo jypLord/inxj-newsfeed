@@ -17,6 +17,7 @@ import java.util.List;
 public class FriendController {
     private final FriendService friendService;
 
+    // Todo: request.getAttribute("") 필터에서 사용하는 값으로 변경
     /*
     친구 목록 조회 API
      */
@@ -69,4 +70,5 @@ public class FriendController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }
