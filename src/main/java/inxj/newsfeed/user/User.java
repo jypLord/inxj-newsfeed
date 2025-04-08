@@ -2,11 +2,12 @@ package inxj.newsfeed.user;
 
 import inxj.newsfeed.common.entity.BaseEntity;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
 @NoArgsConstructor
 public class User extends BaseEntity {
     @Id
@@ -16,11 +17,13 @@ public class User extends BaseEntity {
     @Column(unique = true)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
     @Column(unique = true)
     private String username;
 
+    
     private String name;
 
     private LocalDateTime birthday;
@@ -33,5 +36,4 @@ public class User extends BaseEntity {
     private String profileImageUrl;
 
     private LocalDateTime deletedAt;
-
 }
