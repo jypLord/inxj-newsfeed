@@ -3,8 +3,12 @@ package inxj.newsfeed.like.entity;
 import inxj.newsfeed.common.entity.BaseEntity;
 import inxj.newsfeed.user.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class CommentLike extends BaseEntity {
 
     @EmbeddedId // 복합키
