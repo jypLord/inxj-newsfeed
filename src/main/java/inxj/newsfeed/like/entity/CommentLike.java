@@ -1,6 +1,7 @@
 package inxj.newsfeed.like.entity;
 
 import inxj.newsfeed.common.entity.BaseEntity;
+import inxj.newsfeed.user.User;
 import jakarta.persistence.*;
 
 @Entity
