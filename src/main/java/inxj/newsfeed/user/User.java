@@ -1,6 +1,6 @@
 package inxj.newsfeed.user;
 
-import inxj.newsfeed.common.BaseEntity;
+import inxj.newsfeed.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 
