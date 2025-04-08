@@ -4,8 +4,12 @@ import inxj.newsfeed.common.entity.BaseEntity;
 import inxj.newsfeed.post.entity.Post;
 import inxj.newsfeed.user.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class PostLike extends BaseEntity {
 
     @EmbeddedId

@@ -2,12 +2,16 @@ package inxj.newsfeed.like.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 // 복합키 클래스
 @Embeddable
+@NoArgsConstructor
+@AllArgsConstructor
 public class CommentLikeId implements Serializable {
 
     @Column(name = "comment_id", nullable = false)
