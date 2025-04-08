@@ -37,12 +37,4 @@ public class User extends BaseEntity{
 
     private LocalDateTime deletedAt;
 
-    @OneToMany(mappedBy = "user_id", cascade = CascadeType.ALL)
-    private List<Post> posts = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user_id", cascade = CascadeType.ALL)
-    private List<Comment> comments = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user_id", cascade = CascadeType.ALL)
-    private List<Friend> fridends = new ArrayList<>();
 }
