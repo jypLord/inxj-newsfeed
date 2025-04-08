@@ -3,8 +3,6 @@ package inxj.newsfeed.like.entity;
 import inxj.newsfeed.common.entity.BaseEntity;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
-
 @Entity
 public class CommentLike extends BaseEntity {
 
