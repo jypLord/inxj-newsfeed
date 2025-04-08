@@ -6,12 +6,13 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import static inxj.newsfeed.friend.entity.Status.PENDING;
 
 @Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "friend_request")
 public class FriendRequest extends BaseEntity {
@@ -30,4 +31,9 @@ public class FriendRequest extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status = PENDING;
+
+    public FriendRequest(User requester, User receiver) {
+        this.requester = requester;
+        this.receiver = receiver;
+    }
 }
