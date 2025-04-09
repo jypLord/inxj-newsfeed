@@ -4,7 +4,6 @@ import static inxj.newsfeed.exception.ErrorCode.INVALID_USER_ID;
 import static inxj.newsfeed.friend.entity.Status.ACCEPT;
 
 import inxj.newsfeed.exception.CustomException;
-import inxj.newsfeed.friend.entity.FriendRequest;
 import inxj.newsfeed.friend.repository.FriendRepository;
 import inxj.newsfeed.post.dto.PostCreateRequestDTO;
 import inxj.newsfeed.post.dto.PostResponseDTO;
@@ -77,7 +76,8 @@ public class PostService {
   // 사용자의 모든 게시글 조회
   public List<PostResponseDTO> findAllUserPosts(Long targetUserId, Long loginId) {
     List<Post> postList;
-    User targetUser = userRepository.findById(targetUserId);
+    User targetUser = userRepository.findById(targetUserId)
+        .orElseThrow(() -> new CustomException(INVALID_USER_ID));
 
     // 자신의 모든 게시글을 조회
     if(targetUserId.equals(loginId)) {
@@ -85,8 +85,11 @@ public class PostService {
     }
     // 다른 유저의 모든 게시글을 조회
     else {
-      // 친구라면 전체 공개+친구 공개 게시글 조회
-      if() {
+      User user = userRepository.findById(loginId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
+      List<User> friendList = friendRepository.findByUserAndStatus(user, ACCEPT);
+
+      // 친구라면 전체 공개와 친구 공개 게시글 조회
+      if(friendList.contains(user)) {
         postList = postRepository.findAllByUserOrderByCreatedAtDesc(targetUser);
       }
       // 전체 공개 게시글만 조회
