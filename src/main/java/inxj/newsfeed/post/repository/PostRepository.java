@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
+  // TODO: 메소드명 다시 짓거나 줄이기
 
   // 모든 전체 공개 게시글을 생성일 순으로 조회
   List<Post> findAllByVisibilityOrderByCreatedAtDesc(Visibility visibility);

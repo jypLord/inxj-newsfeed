@@ -36,7 +36,8 @@ public class PostService {
   public void save(PostCreateRequestDTO requestDTO, Long userId) {
     User user = userRepository.findById(userId).orElseThrow(()
         -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 유저 id = "+userId)); // 사용자 찾기
-    postRepository.save(new Post(requestDTO, user));
+    List<Category> categoryList = categoryService.getCategoryByType(requestDTO.getCategoryTypes()); // CategoryType --> Category 변환
+    postRepository.save(new Post(requestDTO, user, categoryList));
   }
 
   // 게시글 단건 조회
@@ -111,9 +112,8 @@ public class PostService {
   public List<PostResponseDTO> findAllPublicPostsByCategories(List<CategoryType> categoryTypeList) {
     // enum 검증은 컨트롤러 레이어에서
 
-    // List <CategoryType> --> List <Category>
-    // 중복값은 JPA IN 쿼리에서 자동으로 무시
-    List<Category> categoryList = categoryService.getCategoryByType(categoryTypeList);
+    // CategoryType 중복값은 JPA IN 쿼리에서 자동으로 무시
+    List<Category> categoryList = categoryService.getCategoryByType(categoryTypeList); // CategoryType --> Category 변환
 
     // 모든 전체 공개 게시글을 카테고리 별로 조회
     List<Post> postList = postRepository.findAllByVisibilityAndCategoryIdsIn(Visibility.PUBLIC, categoryList);
@@ -131,7 +131,7 @@ public class PostService {
 
     // 수정 대상 게시글 작성자가 현재 로그인한 사용자와 동일하다면
     if(loginId.equals(targetUser.getId())) {
-
+      List<Category> categoryList = categoryService.getCategoryByType(requestDTO.getCategoryTypes()); // CategoryType --> Category 변환
       targetPost.update(requestDTO, categoryList);    // 업데이트
     }
     // 일치하지 않는 경우
