@@ -34,10 +34,10 @@ public class FriendController {
     @DeleteMapping("/friends/{friendId}")
     public ResponseEntity<Void> deleteFriend(HttpServletRequest request, @PathVariable Long friendId){
         // 로그인한 유저의 id 뽑아오기
-        Long loginedUserId = getLoginUserId(request);
+        Long loginUserId = getLoginUserId(request);
 
         // 로그인한 유저의 id와 삭제할 친구의 id를 서비스 레이어에 전달
-        friendService.deleteFriend(loginedUserId, friendId);
+        friendService.deleteFriend(loginUserId, friendId);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -48,10 +48,10 @@ public class FriendController {
     @PostMapping("/friend-requests/{userId}")
     public ResponseEntity<Void> requestFriend(HttpServletRequest request, @PathVariable Long userId){
         // 로그인한 유저의 id 뽑아오기
-        Long loginedUserId = getLoginUserId(request);
+        Long loginUserId = getLoginUserId(request);
 
         // 로그인한 유저의 id와 친구 요청할 유저의 id를 서비스 레이어에 전달
-        friendService.requestFriend(loginedUserId, userId);
+        friendService.requestFriend(loginUserId, userId);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -62,10 +62,10 @@ public class FriendController {
     @PostMapping("/friend-requests/accept/{userId}")
     public ResponseEntity<Void> acceptRequest(HttpServletRequest request, @PathVariable Long userId){
         // 로그인한 유저의 id 뽑아오기
-        Long loginedUserId = getLoginUserId(request);
+        Long loginUserId = getLoginUserId(request);
 
         // 로그인한 유저의 id와 요청 수락할 유저의 id를 서비스 레이어에 전달
-        friendService.acceptRequest(loginedUserId, userId);
+        friendService.acceptRequest(loginUserId, userId);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -76,10 +76,10 @@ public class FriendController {
     @PostMapping("/friend-requests/reject/{userId}")
     public ResponseEntity<Void> rejectRequest(HttpServletRequest request, @PathVariable Long userId){
         // 로그인한 유저의 id 뽑아오기
-        Long loginedUserId = getLoginUserId(request);
+        Long loginUserId = getLoginUserId(request);
 
         // 로그인한 유저의 id와 요청 거절할 유저의 id를 서비스 레이어에 전달
-        friendService.rejectRequest(loginedUserId, userId);
+        friendService.rejectRequest(loginUserId, userId);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -37,14 +37,11 @@ public class FriendService {
         User user = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
 
         // user가 receiver or requester인 데이터 중에 status == Accept인 데이터 조회
-        List<User> foundFriends = friendRepository.findByRequesterOrReceiverAndStatus(user, user, ACCEPT);
+        List<User> foundFriends = friendRepository.findByUserAndStatus(user, ACCEPT);
 
-        // foundFriends를 responseDtos에 삽입
-        List<FriendResponseDto> responseDtos = foundFriends.stream()
+        return foundFriends.stream()
                 .map(FriendResponseDto::new)
                 .toList();
-
-        return responseDtos;
     }
 
     /*
@@ -54,13 +51,13 @@ public class FriendService {
     3. Status 값 변경
      */
     @Transactional
-    public void deleteFriend(Long loginedUserId, Long friendId) {
+    public void deleteFriend(Long loginUserId, Long friendId) {
         // User 가져오기 (UserRepository 의존)
-        User loginedUser = userRepository.findById(loginedUserId).orElseThrow(NoSuchElementException::new);
+        User loginUser = userRepository.findById(loginUserId).orElseThrow(NoSuchElementException::new);
         User friend = userRepository.findById(friendId).orElseThrow(NoSuchElementException::new);
 
         // 두 사용자가 requester or receiver인 friendRequest 반환
-        FriendRequest foundFriendRequest = friendRepository.findInteractiveRequest(loginedUser, friend).orElseThrow(NoSuchElementException::new);
+        FriendRequest foundFriendRequest = friendRepository.findInteractiveRequest(loginUser, friend).orElseThrow(NoSuchElementException::new);
 
         // Status가 Accept인 경우 DELETED로 변경
         if (foundFriendRequest.getStatus() == ACCEPT) {
@@ -78,9 +75,9 @@ public class FriendService {
     2-2. friendRequest 테이블에 이미 저장되어있는 데이터인 경우, Status가 DELETE or REJECT인 경우 PENDING으로 변경
      */
     @Transactional
-    public void requestFriend(Long loginedUserId, Long userId) {
+    public void requestFriend(Long loginUserId, Long userId) {
         // User 가져오기 (UserRepository 의존)
-        User requester = userRepository.findById(loginedUserId).orElseThrow(NoSuchElementException::new);
+        User requester = userRepository.findById(loginUserId).orElseThrow(NoSuchElementException::new);
         User receiver = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
 
         // FriendRequest에서 데이터 조회
@@ -106,9 +103,9 @@ public class FriendService {
     3. Status 값 변경
      */
     @Transactional
-    public void acceptRequest(Long loginedUserId, Long userId) {
+    public void acceptRequest(Long loginUserId, Long userId) {
         // 전달받은 id값을 가지는 사용자가 있는지 확인 (UserRepository 의존)
-        User receiver = userRepository.findById(loginedUserId).orElseThrow(NoSuchElementException::new);
+        User receiver = userRepository.findById(loginUserId).orElseThrow(NoSuchElementException::new);
         User requester = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
 
         // 상대 유저가 requester, 로그인 유저가 receiver인 friendRequest 반환
@@ -130,9 +127,9 @@ public class FriendService {
      3. Status 값 변경
       */
     @Transactional
-    public void rejectRequest(Long loginedUserId, Long userId) {
+    public void rejectRequest(Long loginUserId, Long userId) {
         // User 가져오기 (UserRepository 의존)
-        User receiver = userRepository.findById(loginedUserId).orElseThrow(NoSuchElementException::new);
+        User receiver = userRepository.findById(loginUserId).orElseThrow(NoSuchElementException::new);
         User requester = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
 
         // 상대 유저가 requester, 로그인 유저가 receiver인 friendRequest 반환
@@ -159,12 +156,9 @@ public class FriendService {
         // user가 requester인 friendRequest 반환
         List<FriendRequest> foundRequests = friendRepository.findByRequester(user);
 
-        // foundRequests를 responseDtos에 삽입
-        List<FriendRequestResponseDto> responseDtos = foundRequests.stream()
+        return foundRequests.stream()
                 .map(FriendRequestResponseDto::new)
                 .toList();
-
-        return responseDtos;
     }
 
     /*
@@ -179,11 +173,8 @@ public class FriendService {
         // user가 receiver인 friendRequest 반환
         List<FriendRequest> foundRequests = friendRepository.findByReceiver(user);
 
-        // foundRequests를 responseDtos에 삽입
-        List<FriendRequestResponseDto> responseDtos = foundRequests.stream()
+        return foundRequests.stream()
                 .map(FriendRequestResponseDto::new)
                 .toList();
-
-        return responseDtos;
     }
 }
