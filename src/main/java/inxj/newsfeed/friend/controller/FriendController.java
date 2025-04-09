@@ -14,9 +14,9 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class FriendController {
+
     private final FriendService friendService;
 
-    // Todo: userId 로그인 세션에서 사용하는 값으로 변경
     /*
     친구 목록 조회 API
      */
@@ -108,6 +108,7 @@ public class FriendController {
 
     /*
     로그인한 유저 정보 추출 메서드
+    Todo: userId 로그인 세션에서 사용하는 값으로 변경
      */
     private Long getLoginUserId(HttpServletRequest request){
         return (Long) request.getAttribute("loginUser");
