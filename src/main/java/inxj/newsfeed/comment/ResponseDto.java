@@ -1,4 +1,4 @@
-package comment;
+package inxj.newsfeed.comment;
 
 
 import lombok.AllArgsConstructor;
