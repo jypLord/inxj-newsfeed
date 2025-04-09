@@ -68,7 +68,7 @@ public class PostService {
     User targetUser = userRepository.findById(targetUserId);
 
     // 조회 대상 유저와 로그인한 유저가 동일하다면
-    if(targetUserId == loginId) {
+    if(targetUserId.equals(loginId)) {
       postList = postRepository.findAllByUserOrderByCreatedAtDesc(targetUser);
     }
     // 다른 유저의 모든 게시글을 조회한다면
@@ -110,7 +110,7 @@ public class PostService {
     User targetUser = targetPost.getUser();
 
     // 수정 대상 게시글 작성자가 현재 로그인한 사용자와 동일하다면
-    if(loginId == targetUser.getId()) {
+    if(loginId.equals(targetUser.getId())) {
       targetPost.update(requestDTO);    // 업데이트
     }
     // 일치하지 않는 경우
