@@ -2,6 +2,7 @@ package inxj.newsfeed.post.controller;
 
 import inxj.newsfeed.post.dto.PostCreateRequestDTO;
 import inxj.newsfeed.post.dto.PostResponseDTO;
+import inxj.newsfeed.post.dto.PostUpdateRequestDTO;
 import inxj.newsfeed.post.entity.CategoryType;
 import inxj.newsfeed.post.service.PostService;
 import jakarta.servlet.http.HttpSession;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,10 +34,10 @@ public class PostController {
   }
 
   // 게시글 단건 조회
-  @GetMapping("/{id}")
-  public ResponseEntity<PostResponseDTO> find(@PathVariable Long id, HttpSession session) {
+  @GetMapping("/{postId}")
+  public ResponseEntity<PostResponseDTO> find(@PathVariable Long postId, HttpSession session) {
     Long userId = (Long)session.getAttribute("loginUser");
-    return new ResponseEntity<>(postService.find(id, userId), HttpStatus.OK);
+    return new ResponseEntity<>(postService.find(postId, userId), HttpStatus.OK);
   }
 
   // 모든 전체 공개 게시글 조회
@@ -68,7 +70,13 @@ public class PostController {
   }
 
   // 게시글 수정
-
+  @PatchMapping("/{postId}")
+  public ResponseEntity<Void> updatePost(
+      @PathVariable Long postId, @RequestBody PostUpdateRequestDTO requestDTO, HttpSession session) {
+    Long loginId = (Long)session.getAttribute("loginUser");
+    postService.updatePost(postId, requestDTO, loginId);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 
 
   // 게시글 삭제

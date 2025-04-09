@@ -3,6 +3,7 @@ package inxj.newsfeed.post.entity;
 import baseEntity.BaseEntity;
 import inxj.newsfeed.post.converter.StringListConverter;
 import inxj.newsfeed.post.dto.PostCreateRequestDTO;
+import inxj.newsfeed.post.dto.PostUpdateRequestDTO;
 import inxj.newsfeed.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -28,6 +29,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @NoArgsConstructor
 @Table(name="post")
 public class Post extends BaseEntity {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -56,5 +58,10 @@ public class Post extends BaseEntity {
     this.categoryIds = requestDTO.getCategories();
     this.imgUrls = requestDTO.getImgUrls();
     this.visibility = requestDTO.getVisibility();
+  }
+
+  // 업데이트 포스트
+  public void update(PostUpdateRequestDTO requestDTO) {
+
   }
 }

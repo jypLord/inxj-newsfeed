@@ -2,6 +2,7 @@ package inxj.newsfeed.post.service;
 
 import inxj.newsfeed.post.dto.PostCreateRequestDTO;
 import inxj.newsfeed.post.dto.PostResponseDTO;
+import inxj.newsfeed.post.dto.PostUpdateRequestDTO;
 import inxj.newsfeed.post.entity.Category;
 import inxj.newsfeed.post.entity.CategoryType;
 import inxj.newsfeed.post.entity.Post;
@@ -14,6 +15,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -32,9 +34,9 @@ public class PostService {
   }
 
   // 게시글 단건 조회
-  public PostResponseDTO find(Long id, Long userId) {
-    Post post = postRepository.findById(id).orElseThrow(()
-        -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 포스트 id = "+id));
+  public PostResponseDTO find(Long postId, Long userId) {
+    Post post = postRepository.findById(postId).orElseThrow(()
+        -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 포스트 id = "+postId));
 
     // 다른 사람의 친구 공개 게시글이라면
     if(post.getVisibility() == Visibility.FRIENDS && post.getUser().getId() != userId) {
@@ -52,7 +54,7 @@ public class PostService {
   }
 
   // 모든 친구 공개 게시글 조회
-  public List<PostResponseDTO> findAllFriendPosts(Long userId) {
+  public List<PostResponseDTO> findAllFriendPosts(Long loginId) {
     // 친구 목록 조회
     // List<FriendRequest> friendRequestList = friendRepository.findAll;
     List<Post> postList = postRepository.findAllByVisibilityAndUserInOrderByCreatedAtDesc(Visibility.FRIENDS, friendsRequestList);
@@ -64,7 +66,6 @@ public class PostService {
   public List<PostResponseDTO> findAllUserPosts(Long targetUserId, Long loginId) {
     List<Post> postList;
     User targetUser = userRepository.findById(targetUserId);
-    User loginUser = userRepository.findById(loginId);
 
     // 조회 대상 유저와 로그인한 유저가 동일하다면
     if(targetUserId == loginId) {
@@ -78,7 +79,7 @@ public class PostService {
       }
       // 전체 공개 게시글만 조회
       else {
-        postList = postRepository.findAllByUserAndVisibilityOrderByCreatedAtDesc(user, Visibility.PUBLIC);
+        postList = postRepository.findAllByUserAndVisibilityOrderByCreatedAtDesc(targetUser, Visibility.PUBLIC);
       }
     }
 
@@ -99,5 +100,22 @@ public class PostService {
 
     return postList.stream()
         .map(PostResponseDTO::new).toList();
+  }
+
+  // 게시글 수정
+  @Transactional
+  public void updatePost(Long postId, PostUpdateRequestDTO requestDTO, Long loginId) {
+    Post targetPost = postRepository.findById(postId).orElseThrow(()
+        -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 포스트 id = " + postId));  // 게시글 찾기
+    User targetUser = targetPost.getUser();
+
+    // 수정 대상 게시글 작성자가 현재 로그인한 사용자와 동일하다면
+    if(loginId == targetUser.getId()) {
+      targetPost.update(requestDTO);    // 업데이트
+    }
+    // 일치하지 않는 경우
+    else {
+      throw new RuntimeException("게시글 ID = "+postId+" 의 작성자가 아닙니다.");
+    }
   }
 }
