@@ -5,9 +5,9 @@ import inxj.newsfeed.friend.dto.FriendResponseDto;
 import inxj.newsfeed.friend.entity.FriendRequest;
 import inxj.newsfeed.friend.repository.FriendRepository;
 import inxj.newsfeed.user.User;
+import inxj.newsfeed.user.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
