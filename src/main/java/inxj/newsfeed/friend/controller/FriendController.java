@@ -31,7 +31,7 @@ public class FriendController {
     /*
     친구 삭제 API
      */
-    @PatchMapping("/friends/{friendId}")
+    @DeleteMapping("/friends/{friendId}")
     public ResponseEntity<Void> deleteFriend(HttpServletRequest request, @PathVariable Long friendId){
         // 로그인한 유저의 id 뽑아오기
         Long loginedUserId = getLoginUserId(request);
