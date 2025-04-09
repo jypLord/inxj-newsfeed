@@ -1,6 +1,6 @@
 package inxj.newsfeed.post.entity;
 
-import baseEntity.BaseEntity;
+import inxj.newsfeed.common.entity.BaseEntity;
 import inxj.newsfeed.post.converter.StringListConverter;
 import inxj.newsfeed.post.dto.PostCreateRequestDTO;
 import inxj.newsfeed.user.User;
