@@ -3,6 +3,7 @@ package inxj.newsfeed.comment;
 import inxj.newsfeed.exception.CustomException;
 import inxj.newsfeed.exception.ErrorCode;
 import inxj.newsfeed.post.entity.Post;
+import inxj.newsfeed.post.repository.PostRepository;
 import inxj.newsfeed.user.User;
 import inxj.newsfeed.user.UserRepository;
 import lombok.RequiredArgsConstructor;
