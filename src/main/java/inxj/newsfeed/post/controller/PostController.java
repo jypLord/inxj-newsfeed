@@ -2,7 +2,6 @@ package inxj.newsfeed.post.controller;
 
 import inxj.newsfeed.post.dto.PostCreateRequestDTO;
 import inxj.newsfeed.post.dto.PostResponseDTO;
-import inxj.newsfeed.post.entity.Category;
 import inxj.newsfeed.post.entity.CategoryType;
 import inxj.newsfeed.post.service.PostService;
 import jakarta.servlet.http.HttpSession;
@@ -42,16 +41,16 @@ public class PostController {
   // 모든 전체 공개 게시글 조회
   // 조건: 전체, 카테고리
   // TODO: Category List 검증 로직 필요
-//  @GetMapping
-//  public ResponseEntity<List<PostResponseDTO>> findAllPublicPosts(
-//      @RequestParam(required = false) List<CategoryType> categories, HttpSession session) {
-//    if(categories == null || categories.isEmpty()) {
-//      return new ResponseEntity<>(postService.findAllPublicPosts(), HttpStatus.OK);
-//    }
-//    else {
-//      return new ResponseEntity<>(postService.findAllPublicPostsByCategories(categories), HttpStatus.OK);
-//    }
-//  }
+  @GetMapping
+  public ResponseEntity<List<PostResponseDTO>> findAllPublicPosts(
+      @RequestParam(required = false) List<CategoryType> categoryTypeList, HttpSession session) {
+    if(categoryTypeList == null || categoryTypeList.isEmpty()) {
+      return new ResponseEntity<>(postService.findAllPublicPosts(), HttpStatus.OK);
+    }
+    else {
+      return new ResponseEntity<>(postService.findAllPublicPostsByCategories(categoryTypeList), HttpStatus.OK);
+    }
+  }
 
   // 모든 친구 공개 게시글 조회
   @GetMapping("/friends")
