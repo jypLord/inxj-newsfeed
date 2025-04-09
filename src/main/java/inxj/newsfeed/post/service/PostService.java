@@ -79,11 +79,11 @@ public class PostService {
     List<Post> postList;
     User targetUser = userRepository.findById(targetUserId);
 
-    // 조회 대상 유저와 로그인한 유저가 동일하다면
+    // 자신의 모든 게시글을 조회
     if(targetUserId.equals(loginId)) {
       postList = postRepository.findAllByUserOrderByCreatedAtDesc(targetUser);
     }
-    // 다른 유저의 모든 게시글을 조회한다면
+    // 다른 유저의 모든 게시글을 조회
     else {
       // 친구라면 전체 공개+친구 공개 게시글 조회
       if() {
