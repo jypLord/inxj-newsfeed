@@ -139,4 +139,19 @@ public class PostService {
       throw new RuntimeException("게시글 ID = "+postId+" 의 작성자가 아닙니다.");
     }
   }
+
+  // 게시물 삭제
+  @Transactional
+  public void deletePost(Long postId, Long loginId) {
+    Post targetPost = postRepository.findById(postId).orElseThrow(()
+        -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 포스트 id = " + postId));  // 게시글 찾기
+    // 수정 대상 게시글 작성자가 현재 로그인한 사용자와 동일하다면
+    if(loginId.equals(targetPost.getUser().getId())) {
+      postRepository.delete(targetPost);
+    }
+    // 일치하지 않는 경우
+    else {
+      throw new RuntimeException("게시글 ID = "+postId+" 의 작성자가 아닙니다.");
+    }
+  }
 }
