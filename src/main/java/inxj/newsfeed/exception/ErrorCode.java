@@ -13,6 +13,7 @@ public enum ErrorCode {
     INVALID_PASSWORD("유효하지 않은 비밀번호입니다.", HttpStatus.BAD_REQUEST, 400),
     INVALID_USER_ID("유효하지 않은 사용자 ID입니다.", HttpStatus.BAD_REQUEST, 400),
     INVALID_POST_ID("유효하지 않은 게시글 ID입니다.", HttpStatus.BAD_REQUEST, 400),
+    INVALID_FRIEND_REQUEST("유효하지 않은 요청입니다.", HttpStatus.BAD_REQUEST, 400),
     //401 UNAUTHORIZED
     UNAUTHORIZED_USER_ID("유효하지 않은 게시글 ID입니다.", HttpStatus.UNAUTHORIZED, 401),
 
@@ -26,7 +27,8 @@ public enum ErrorCode {
 
     // 409 Conflict
     CONFLICT_EMAIL("중복된 이메일입니다.", HttpStatus.CONFLICT, 409),
-    CONFLICT_PASSWORD("중복된 비밀번호입니다.", HttpStatus.CONFLICT, 409);
+    CONFLICT_PASSWORD("중복된 비밀번호입니다.", HttpStatus.CONFLICT, 409),
+    CONFLICT_STATUS("중복된 요청입니다.", HttpStatus.CONFLICT, 409);
 
     private final String message;
     private final HttpStatus httpStatus;
