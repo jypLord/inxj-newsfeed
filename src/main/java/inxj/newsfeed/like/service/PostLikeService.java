@@ -1,21 +1,16 @@
 package inxj.newsfeed.like.service;
 
-import inxj.newsfeed.common.enums.Message;
 import inxj.newsfeed.like.entity.PostLike;
 import inxj.newsfeed.like.entity.PostLikeId;
 import inxj.newsfeed.like.repository.PostLikeRepository;
 import inxj.newsfeed.post.entity.Post;
 import inxj.newsfeed.user.User;
 import inxj.newsfeed.user.UserRepository;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
 @Service
-@AllArgsConstructor // 생성자가 한 개인 경우 자동으로 @Autowired 가 붙음
+@RequiredArgsConstructor // 생성자가 한 개인 경우 자동으로 @Autowired 가 붙음
 public class PostLikeService {
 
     private final PostLikeRepository postLikeRepository;
