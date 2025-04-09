@@ -21,6 +21,8 @@ public enum ErrorCode {
     NOT_FOUND_PASSWORD("비밀번호를 찾을 수 없습니다.", HttpStatus.NOT_FOUND, 404),
     NOT_FOUND_USER_ID("사용자 ID를 찾을 수 없습니다.", HttpStatus.NOT_FOUND, 404),
     NOT_FOUND_POST_ID("게시글 ID를 찾을 수 없습니다.", HttpStatus.NOT_FOUND, 404),
+    NOT_FOUND_COMMENT_ID("해당하는 댓글이 없습니다",HttpStatus.NOT_FOUND,404),
+    NOT_FOUND_COMMENTLIKE_ID("해당하는 항목이 없습니다.",HttpStatus.NOT_FOUND,404),
 
     // 409 Conflict
     CONFLICT_EMAIL("중복된 이메일입니다.", HttpStatus.CONFLICT, 409),

@@ -1,17 +1,18 @@
-package comment;
+package inxj.newsfeed.comment;
 
 
 import baseEntity.BaseEntity;
+import inxj.newsfeed.post.entity.Post;
 import inxj.newsfeed.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
 @NoArgsConstructor
+@Getter
 @Entity
 @Table(name = "comment")
-public class CommentEntity extends BaseEntity {
+public class Comment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -27,11 +28,12 @@ public class CommentEntity extends BaseEntity {
     @Column(columnDefinition = "longtext")
     String content;
 
-    public CommentEntity(User user,Post post,String content){
+    public Comment(User user, Post post, String content){
         this.post=post;
         this.user=user;
         this.content=content;
     }
+
     //세터 사용 안하는 이유 : null체크랑 통일성 키울려고 이렇게 합니다
     public void updateContent(String content) {
        if (content.isBlank()){
