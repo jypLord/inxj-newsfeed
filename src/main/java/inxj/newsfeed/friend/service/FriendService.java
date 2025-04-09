@@ -1,5 +1,6 @@
 package inxj.newsfeed.friend.service;
 
+import inxj.newsfeed.friend.dto.FriendRequestResponseDto;
 import inxj.newsfeed.friend.dto.FriendResponseDto;
 import inxj.newsfeed.friend.entity.FriendRequest;
 import inxj.newsfeed.friend.repository.FriendRepository;
@@ -24,7 +25,7 @@ public class FriendService {
     // Todo: 예외처리
     // Todo: NoSuchElementException -> 404 Not Found / "조회한 데이터가 존재하지 않습니다."
     // Todo: NotFriendException -> 400 Bad Request / "해당 유저와 친구 관계가 아닙니다."
-    // Todo: AlreadyProcessedException -> 409 Conflict / "이미 처리된 요청입니다."
+    // Todo: AlreadyProcessedException -> 409 Conflict / "이미 처리된 요청입니다." / 현재 Status 파라미터로 전달
 
     /*
     친구 목록 조회 API
@@ -40,7 +41,7 @@ public class FriendService {
 
         List<FriendResponseDto> responseDtos = new ArrayList<>();
 
-        // foundFriends를 ResponseDtos에 삽입
+        // foundFriends를 responseDtos에 삽입
         for (User friend : foundFriends) {
             responseDtos.add(new FriendResponseDto(friend));
         }
@@ -143,5 +144,49 @@ public class FriendService {
             // Status가 PENDING이 아닌 경우 예외 발생(이미 요청을 거절, 수락하거나 친구 삭제한 경우)
             throw new AlreadyProcessedException();
         }
+    }
+
+    /*
+    보낸 친구 요청 목록 조회 API
+    1. 전달받은 id값을 가지는 사용자 조회(사용자 존재 여부 확인)
+    2. FriendRequest 테이블에서 데이터 조회
+     */
+    public List<FriendRequestResponseDto> findSentRequests(Long userId) {
+        // User 가져오기 (UserRepository 의존)
+        User user = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
+
+        // user가 requester인 friendRequest 반환
+        List<FriendRequest> foundRequests = friendRepository.findByRequester(user);
+
+        List<FriendRequestResponseDto> responseDtos = new ArrayList<>();
+
+        // foundRequests를 responseDtos에 삽입
+        for(FriendRequest request : foundRequests){
+            responseDtos.add(new FriendRequestResponseDto(request));
+        }
+
+        return responseDtos;
+    }
+
+    /*
+    받은 친구 요청 목록 조회 API
+    1. 전달받은 id값을 가지는 사용자 조회(사용자 존재 여부 확인)
+    2. FriendRequest 테이블에서 데이터 조회
+     */
+    public List<FriendRequestResponseDto> findReceivedRequests(Long userId) {
+        // User 가져오기 (UserRepository 의존)
+        User user = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
+
+        // user가 receiver인 friendRequest 반환
+        List<FriendRequest> foundRequests = friendRepository.findByReceiver(user);
+
+        List<FriendRequestResponseDto> responseDtos = new ArrayList<>();
+
+        // foundRequests를 responseDtos에 삽입
+        for(FriendRequest request : foundRequests){
+            responseDtos.add(new FriendRequestResponseDto(request));
+        }
+
+        return responseDtos;
     }
 }

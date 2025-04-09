@@ -1,11 +1,13 @@
 package inxj.newsfeed.friend.controller;
 
+import inxj.newsfeed.friend.dto.FriendRequestResponseDto;
 import inxj.newsfeed.friend.dto.FriendResponseDto;
 import inxj.newsfeed.friend.service.FriendService;
 import inxj.newsfeed.user.User;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +48,7 @@ public class FriendController {
     /*
     친구 요청 API
      */
-    @PostMapping("/friend-request/{userId}")
+    @PostMapping("/friend-requests/{userId}")
     public ResponseEntity<Void> requestFriend(HttpServletRequest request, @PathVariable Long userId){
         // 로그인한 유저의 id 뽑아오기
         Long loginedUserId = (Long) request.getAttribute("userId");
@@ -60,7 +62,7 @@ public class FriendController {
     /*
     친구 요청 수락 API
      */
-    @PostMapping("/friend-request/accept/{userId}")
+    @PostMapping("/friend-requests/accept/{userId}")
     public ResponseEntity<Void> acceptRequest(HttpServletRequest request, @PathVariable Long userId){
         // 로그인한 유저의 id 뽑아오기
         Long loginedUserId = (Long) request.getAttribute("userId");
@@ -74,7 +76,7 @@ public class FriendController {
     /*
     친구 요청 거절 API
      */
-    @PostMapping("/friend-request/reject/{userId}")
+    @PostMapping("/friend-requests/reject/{userId}")
     public ResponseEntity<Void> rejectRequest(HttpServletRequest request, @PathVariable Long userId){
         // 로그인한 유저의 id 뽑아오기
         Long loginedUserId = (Long) request.getAttribute("userId");
@@ -85,5 +87,25 @@ public class FriendController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /*
+    보낸 친구 요청 목록 조회 API
+     */
+    @GetMapping("/friend-requests/sent")
+    public ResponseEntity<List<FriendRequestResponseDto>> findSentRequests(HttpServletRequest request){
+        // 로그인한 유저의 id 뽑아오기
+        Long userId = (Long) request.getAttribute("userId");
 
+        return new ResponseEntity<>(friendService.findSentRequests(userId), HttpStatus.OK);
+    }
+
+    /*
+    받은 친구 요청 목록 조회 API
+     */
+    @GetMapping("/friend-requests/received")
+    public ResponseEntity<List<FriendRequestResponseDto>> findReceivedRequests(HttpServletRequest request){
+        // 로그인한 유저의 id 뽑아오기
+        Long userId = (Long) request.getAttribute("userId");
+
+        return new ResponseEntity<>(friendService.findReceivedRequests(userId), HttpStatus.OK);
+    }
 }
