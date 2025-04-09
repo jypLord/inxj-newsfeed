@@ -2,13 +2,14 @@ package inxj.newsfeed.user;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 
 @Entity
-@Getter
+@Getter @Setter
 @NoArgsConstructor
 public class User extends BaseEntity{
     @Id
