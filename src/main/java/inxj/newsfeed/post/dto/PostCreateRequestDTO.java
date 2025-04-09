@@ -10,17 +10,14 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class CreatePostRequestDTO {
-  @NotBlank(message = "사용자 아이디는 필수값 입니다.")
-  private final Long userId;
-
+public class PostCreateRequestDTO {
   // TODO: List<Category> 검증 로직 추가
   // TODO: Enum Visibility 검증 로직 추가 (json 파싱 오류 발생 가능성, 커스텀 어노테이션 혹은 따로 검증 로직)
   @Size(min=1, max=1000, message = "게시글은 1000글자 이내여야 합니다.")
   @NotBlank(message = "게시글 내용은 필수값 입니다.")
   private final String content;
 
-  private final List<String> photoUrls;
+  private final List<String> imgUrls;
 
   @NotBlank(message = "카테고리는 필수값 입니다.")
   private final List<Category> categories;
