@@ -45,9 +45,15 @@ public class PostService {
     Post post = postRepository.findById(postId).orElseThrow(()
         -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 포스트 id = "+postId));
 
-    // 다른 사람의 친구 공개 게시글이라면
+    // 다른 사용자의 친구 공개 게시글
     if(post.getVisibility() == Visibility.FRIENDS && !(post.getUser().getId().equals(userId))) {
-      // TODO: post의 작성자와 친구 여부 확인
+      User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
+      List<User> friendList = friendRepository.findByUserAndStatus(user, ACCEPT);
+
+      // 게시글 작성자와 친구가 아니라면
+      if(!friendList.contains(user)) {
+        throw new RuntimeException("게시글 ID = "+postId+" 의 작성자가 아닙니다.");
+      }
     }
     return new PostResponseDTO(post);
   }
