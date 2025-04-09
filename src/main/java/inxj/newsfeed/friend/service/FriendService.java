@@ -10,9 +10,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static inxj.newsfeed.friend.entity.Status.*;
 
@@ -22,10 +22,10 @@ public class FriendService {
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
 
-    // Todo: 예외처리
-    // Todo: NoSuchElementException -> 404 Not Found / "조회한 데이터가 존재하지 않습니다."
-    // Todo: NotFriendException -> 400 Bad Request / "해당 유저와 친구 관계가 아닙니다."
-    // Todo: AlreadyProcessedException -> 409 Conflict / "이미 처리된 요청입니다." / 현재 Status 파라미터로 전달
+     // Todo: 예외처리
+     // NoSuchElementException -> 404 Not Found / "조회한 데이터가 존재하지 않습니다."
+     // NotFriendException -> 400 Bad Request / "해당 유저와 친구 관계가 아닙니다."
+     // AlreadyProcessedException -> 409 Conflict / "이미 처리된 요청입니다." / 현재 Status 파라미터로 전달
 
     /*
     친구 목록 조회 API
@@ -39,12 +39,10 @@ public class FriendService {
         // user가 receiver or requester인 데이터 중에 status == Accept인 데이터 조회
         List<User> foundFriends = friendRepository.findByRequesterOrReceiverAndStatus(user, user, ACCEPT);
 
-        List<FriendResponseDto> responseDtos = new ArrayList<>();
-
         // foundFriends를 responseDtos에 삽입
-        for (User friend : foundFriends) {
-            responseDtos.add(new FriendResponseDto(friend));
-        }
+        List<FriendResponseDto> responseDtos = foundFriends.stream()
+                .map(FriendResponseDto::new)
+                .toList();
 
         return responseDtos;
     }
@@ -85,13 +83,16 @@ public class FriendService {
         User requester = userRepository.findById(loginedUserId).orElseThrow(NoSuchElementException::new);
         User receiver = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
 
+        // FriendRequest에서 데이터 조회
+        Optional<FriendRequest> foundFriendRequest = friendRepository.findInteractiveRequest(requester, receiver);
+
         // insert
-        if (friendRepository.findInteractiveRequest(requester, receiver).isEmpty()) {
+        if (foundFriendRequest.isEmpty()) {
             friendRepository.save(new FriendRequest(requester, receiver));
         } // Status PENDING으로 변경
-        else if (friendRepository.findInteractiveRequest(receiver, requester).get().getStatus() == REJECT
-                || friendRepository.findInteractiveRequest(receiver, requester).get().getStatus() == DELETED) {
-            friendRepository.findInteractiveRequest(receiver, requester).get().setStatus(PENDING);
+        else if (foundFriendRequest.get().getStatus() == REJECT
+                || foundFriendRequest.get().getStatus() == DELETED) {
+            foundFriendRequest.get().setStatus(PENDING);
         }else{
             // Status가 PENDING or ACCEPT인 경우 예외 발생
             throw new AlreadyProcessedException();
@@ -158,12 +159,10 @@ public class FriendService {
         // user가 requester인 friendRequest 반환
         List<FriendRequest> foundRequests = friendRepository.findByRequester(user);
 
-        List<FriendRequestResponseDto> responseDtos = new ArrayList<>();
-
         // foundRequests를 responseDtos에 삽입
-        for(FriendRequest request : foundRequests){
-            responseDtos.add(new FriendRequestResponseDto(request));
-        }
+        List<FriendRequestResponseDto> responseDtos = foundRequests.stream()
+                .map(FriendRequestResponseDto::new)
+                .toList();
 
         return responseDtos;
     }
@@ -180,12 +179,10 @@ public class FriendService {
         // user가 receiver인 friendRequest 반환
         List<FriendRequest> foundRequests = friendRepository.findByReceiver(user);
 
-        List<FriendRequestResponseDto> responseDtos = new ArrayList<>();
-
         // foundRequests를 responseDtos에 삽입
-        for(FriendRequest request : foundRequests){
-            responseDtos.add(new FriendRequestResponseDto(request));
-        }
+        List<FriendRequestResponseDto> responseDtos = foundRequests.stream()
+                .map(FriendRequestResponseDto::new)
+                .toList();
 
         return responseDtos;
     }
