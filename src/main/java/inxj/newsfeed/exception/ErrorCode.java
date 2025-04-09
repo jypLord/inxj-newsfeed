@@ -14,6 +14,7 @@ public enum ErrorCode {
     INVALID_USER_ID("유효하지 않은 사용자 ID입니다.", HttpStatus.BAD_REQUEST, 400),
     INVALID_POST_ID("유효하지 않은 게시글 ID입니다.", HttpStatus.BAD_REQUEST, 400),
     INVALID_FRIEND_REQUEST("유효하지 않은 요청입니다.", HttpStatus.BAD_REQUEST, 400),
+
     //401 UNAUTHORIZED
     UNAUTHORIZED_USER_ID("유효하지 않은 게시글 ID입니다.", HttpStatus.UNAUTHORIZED, 401),
 
@@ -22,6 +23,8 @@ public enum ErrorCode {
     NOT_FOUND_PASSWORD("비밀번호를 찾을 수 없습니다.", HttpStatus.NOT_FOUND, 404),
     NOT_FOUND_USER_ID("사용자 ID를 찾을 수 없습니다.", HttpStatus.NOT_FOUND, 404),
     NOT_FOUND_POST_ID("게시글 ID를 찾을 수 없습니다.", HttpStatus.NOT_FOUND, 404),
+    NOT_FOUND_COMMENT_ID("댓글 ID를 찾을 수 없습니다.", HttpStatus.NOT_FOUND, 404),
+    NOT_FOUND_LIKE_ID("좋아요 ID를 찾을 수 없습니다.", HttpStatus.NOT_FOUND, 404),
 
     // 409 Conflict
     CONFLICT_EMAIL("중복된 이메일입니다.", HttpStatus.CONFLICT, 409),
@@ -30,7 +33,7 @@ public enum ErrorCode {
 
     private final String message;
     private final HttpStatus httpStatus;
-    //변경가능
+    // 변경 가능
     private final int Code;
 }
 
