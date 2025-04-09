@@ -1,5 +1,7 @@
 package inxj.newsfeed.like.service;
 
+import inxj.newsfeed.comment.Comment;
+import inxj.newsfeed.comment.CommentRepository;
 import inxj.newsfeed.exception.CustomException;
 import inxj.newsfeed.exception.ErrorCode;
 import inxj.newsfeed.like.entity.CommentLike;
@@ -9,6 +11,7 @@ import inxj.newsfeed.like.entity.PostLikeId;
 import inxj.newsfeed.like.repository.CommentLikeRepository;
 import inxj.newsfeed.like.repository.PostLikeRepository;
 import inxj.newsfeed.post.entity.Post;
+import inxj.newsfeed.post.repository.PostRepository;
 import inxj.newsfeed.user.User;
 import inxj.newsfeed.user.UserRepository;
 import lombok.RequiredArgsConstructor;
