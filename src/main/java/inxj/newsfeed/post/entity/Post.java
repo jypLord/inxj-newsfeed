@@ -52,16 +52,28 @@ public class Post extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private Visibility visibility;  // 공개 범위(Enum String 값 저장)
 
-  public Post(PostCreateRequestDTO requestDTO, User user) {
+  public Post(PostCreateRequestDTO requestDTO, User user, List<Category> categoryList) {
     this.user = user;
     this.content = requestDTO.getContent();
-    this.categoryIds = requestDTO.getCategories();
+    this.categoryIds = categoryList;
     this.imgUrls = requestDTO.getImgUrls();
     this.visibility = requestDTO.getVisibility();
   }
 
   // 업데이트 포스트
-  public void update(PostUpdateRequestDTO requestDTO) {
-
+  public void update(PostUpdateRequestDTO requestDTO, List<Category> categoryList) {
+    // 변경 사항이 있다면 업데이트
+    if(requestDTO.getContent() != null) {
+      this.content = requestDTO.getContent();
+    }
+    if(categoryList != null) {
+      this.categoryIds = categoryList;
+    }
+    if(requestDTO.getContent() != null) {
+      this.imgUrls = requestDTO.getImgUrls();
+    }
+    if(requestDTO.getContent() != null) {
+      this.visibility = requestDTO.getVisibility();
+    }
   }
 }
