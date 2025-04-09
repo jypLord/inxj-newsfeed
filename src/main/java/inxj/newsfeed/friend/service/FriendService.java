@@ -29,7 +29,7 @@ public class FriendService {
     2. 조회한 사용자의 친구 요청 목록에서 Status가 Accept인 사용자 조회
      */
     public List<FriendResponseDto> findAllFriends(Long userId) {
-        // User 가져오기 (UserRepository 의존)
+        // User 가져오기
         User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
 
         // user가 receiver or requester인 데이터 중에 status == Accept인 데이터 조회
@@ -48,7 +48,7 @@ public class FriendService {
      */
     @Transactional
     public void deleteFriend(Long loginUserId, Long friendId) {
-        // User 가져오기 (UserRepository 의존)
+        // User 가져오기
         User loginUser = userRepository.findById(loginUserId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
         User friend = userRepository.findById(friendId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
 
@@ -72,7 +72,7 @@ public class FriendService {
      */
     @Transactional
     public void requestFriend(Long loginUserId, Long userId) {
-        // User 가져오기 (UserRepository 의존)
+        // User 가져오기
         User requester = userRepository.findById(loginUserId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
         User receiver = userRepository.findById(userId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
 
@@ -100,7 +100,7 @@ public class FriendService {
      */
     @Transactional
     public void acceptRequest(Long loginUserId, Long userId) {
-        // 전달받은 id값을 가지는 사용자가 있는지 확인 (UserRepository 의존)
+        // 전달받은 id값을 가지는 사용자가 있는지 확인
         User receiver = userRepository.findById(loginUserId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
         User requester = userRepository.findById(userId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
 
@@ -124,7 +124,7 @@ public class FriendService {
       */
     @Transactional
     public void rejectRequest(Long loginUserId, Long userId) {
-        // User 가져오기 (UserRepository 의존)
+        // User 가져오기
         User receiver = userRepository.findById(loginUserId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
         User requester = userRepository.findById(userId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
 
@@ -146,7 +146,7 @@ public class FriendService {
     2. FriendRequest 테이블에서 데이터 조회
      */
     public List<FriendRequestResponseDto> findSentRequests(Long userId) {
-        // User 가져오기 (UserRepository 의존)
+        // User 가져오기
         User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
 
         // user가 requester인 friendRequest 반환
@@ -163,7 +163,7 @@ public class FriendService {
     2. FriendRequest 테이블에서 데이터 조회
      */
     public List<FriendRequestResponseDto> findReceivedRequests(Long userId) {
-        // User 가져오기 (UserRepository 의존)
+        // User 가져오기
         User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
 
         // user가 receiver인 friendRequest 반환
