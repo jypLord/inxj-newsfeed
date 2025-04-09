@@ -1,5 +1,11 @@
 package inxj.newsfeed.post.service;
 
+import static inxj.newsfeed.exception.ErrorCode.INVALID_USER_ID;
+import static inxj.newsfeed.friend.entity.Status.ACCEPT;
+
+import inxj.newsfeed.exception.CustomException;
+import inxj.newsfeed.friend.entity.FriendRequest;
+import inxj.newsfeed.friend.repository.FriendRepository;
 import inxj.newsfeed.post.dto.PostCreateRequestDTO;
 import inxj.newsfeed.post.dto.PostResponseDTO;
 import inxj.newsfeed.post.dto.PostUpdateRequestDTO;
@@ -10,7 +16,7 @@ import inxj.newsfeed.post.entity.Visibility;
 import inxj.newsfeed.post.repository.CategoryRepository;
 import inxj.newsfeed.post.repository.PostRepository;
 import inxj.newsfeed.user.User;
-import inxj.newsfeed.user.repository.UserRepository;
+import inxj.newsfeed.user.UserRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,6 +32,8 @@ public class PostService {
   private final UserRepository userRepository;
   private final FriendRepository friendRepository;
 
+  // TODO: CustomException 반영
+
   // 게시글 작성
   public void save(PostCreateRequestDTO requestDTO, Long userId) {
     User user = userRepository.findById(userId).orElseThrow(()
@@ -39,7 +47,7 @@ public class PostService {
         -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 포스트 id = "+postId));
 
     // 다른 사람의 친구 공개 게시글이라면
-    if(post.getVisibility() == Visibility.FRIENDS && post.getUser().getId() != userId) {
+    if(post.getVisibility() == Visibility.FRIENDS && !(post.getUser().getId().equals(userId))) {
       // TODO: post의 작성자와 친구 여부 확인
     }
     return new PostResponseDTO(post);
@@ -55,9 +63,13 @@ public class PostService {
 
   // 모든 친구 공개 게시글 조회
   public List<PostResponseDTO> findAllFriendPosts(Long loginId) {
+    User user = userRepository.findById(loginId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
+
     // 친구 목록 조회
-    // List<FriendRequest> friendRequestList = friendRepository.findAll;
-    List<Post> postList = postRepository.findAllByVisibilityAndUserInOrderByCreatedAtDesc(Visibility.FRIENDS, friendsRequestList);
+    List<User> friendList = friendRepository.findByUserAndStatus(user, ACCEPT);
+
+    // 친구인 사용자들의 모든 친구 공개 게시글 조회
+    List<Post> postList = postRepository.findAllByVisibilityAndUserInOrderByCreatedAtDesc(Visibility.FRIENDS, friendList);
     return postList.stream()
         .map(PostResponseDTO::new).toList();
   }
