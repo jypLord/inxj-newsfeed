@@ -39,7 +39,7 @@ public class Post extends BaseEntity {
   private String content;   // 내용
 
   @OneToMany(fetch = FetchType.LAZY)
-  private List<Category> categories;  // 카테고리
+  private List<Category> categoryIds;  // 카테고리
 
   @Convert(converter = StringListConverter.class)
   private List<String> imgUrls; // 이미지 URLs
@@ -51,7 +51,7 @@ public class Post extends BaseEntity {
   public Post(PostCreateRequestDTO requestDTO, User user) {
     this.user = user;
     this.content = requestDTO.getContent();
-    this.categories = requestDTO.getCategories();
+    this.categoryIds = requestDTO.getCategories();
     this.imgUrls = requestDTO.getImgUrls();
     this.visibility = requestDTO.getVisibility();
   }

@@ -16,7 +16,7 @@ public class PostResponseDTO {
   public PostResponseDTO (Post post) {
     this.content = post.getContent();
     this.imgUrls = post.getImgUrls();
-    this.categories = post.getCategories();
+    this.categories = post.getCategoryIds();
     this.visibility = post.getVisibility();
   }
 }
