@@ -14,27 +14,30 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class CommentService {
+
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+
     //생성
-    public void saveComment(Long id, Long postId, RequestDto requestDto){
-        User user= userRepository.findById(id)
-        .orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_USER_ID));
+    public void saveComment(Long id, Long postId, RequestDto requestDto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER_ID));
 
-        Post post= postRepository.findById(postId)
-        .orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_POST_ID));
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST_ID));
 
-        Comment comment =new Comment(user,post,requestDto.getComment());
+        Comment comment = new Comment(user, post, requestDto.getComment());
 
         commentRepository.save(comment);
     }
+
     //전체조회 paging 할까요?
     @Transactional(readOnly = true)
-    public List<ResponseDto> findComment(Long postId){
+    public List<ResponseDto> findComment(Long postId) {
 
         return commentRepository.findByPostId(postId).stream()
-                .map(commentEntity ->new ResponseDto(commentEntity.getId(),
+                .map(commentEntity -> new ResponseDto(commentEntity.getId(),
                         commentEntity.getContent(),
                         commentEntity.getCreatedAt(),
                         commentEntity.getUpdatedAt()))
@@ -43,27 +46,26 @@ public class CommentService {
 
     //수정
     @Transactional
-    public void updateComment(Long userId, Long commentId, RequestDto requestDto){
+    public void updateComment(Long userId, Long commentId, RequestDto requestDto) {
 
-        Comment comment=commentRepository.findById(commentId).
-                orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_COMMENT_ID));
+        Comment comment = commentRepository.findById(commentId).
+                orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COMMENT_ID));
 
-        if (!userId.equals(comment.getUser().getId())){
+        if (!userId.equals(comment.getUser().getId())) {
             throw new CustomException(ErrorCode.UNAUTHORIZED_USER_ID);
         }
 
         comment.updateContent(requestDto.getComment());
-
     }
+
     //삭제
-    public void deleteComment(Long userId,Long commentId){
-        Comment comment=commentRepository.findById(commentId).
-                orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_COMMENT_ID));
-        if (!userId.equals(comment.user.getId())){
+    public void deleteComment(Long userId, Long commentId) {
+        Comment comment = commentRepository.findById(commentId).
+                orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COMMENT_ID));
+        if (!userId.equals(comment.user.getId())) {
             throw new CustomException(ErrorCode.UNAUTHORIZED_USER_ID);
         }
         commentRepository.deleteById(commentId);
     }
-
 
 }

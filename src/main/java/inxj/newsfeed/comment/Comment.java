@@ -1,6 +1,5 @@
 package inxj.newsfeed.comment;
 
-
 import baseEntity.BaseEntity;
 import inxj.newsfeed.post.entity.Post;
 import inxj.newsfeed.user.User;
