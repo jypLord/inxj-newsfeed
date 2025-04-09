@@ -1,5 +1,6 @@
 package inxj.newsfeed.friend.service;
 
+import inxj.newsfeed.exception.CustomException;
 import inxj.newsfeed.friend.dto.FriendRequestResponseDto;
 import inxj.newsfeed.friend.dto.FriendResponseDto;
 import inxj.newsfeed.friend.entity.FriendRequest;
@@ -11,9 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import static inxj.newsfeed.exception.ErrorCode.*;
 import static inxj.newsfeed.friend.entity.Status.*;
 
 @Service
@@ -22,11 +23,6 @@ public class FriendService {
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
 
-     // Todo: 예외처리
-     // NoSuchElementException -> 404 Not Found / "조회한 데이터가 존재하지 않습니다."
-     // NotFriendException -> 400 Bad Request / "해당 유저와 친구 관계가 아닙니다."
-     // AlreadyProcessedException -> 409 Conflict / "이미 처리된 요청입니다." / 현재 Status 파라미터로 전달
-
     /*
     친구 목록 조회 API
     1. 전달받은 id값을 가지는 사용자 조회(사용자 존재 여부 확인)
@@ -34,7 +30,7 @@ public class FriendService {
      */
     public List<FriendResponseDto> findAllFriends(Long userId) {
         // User 가져오기 (UserRepository 의존)
-        User user = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
 
         // user가 receiver or requester인 데이터 중에 status == Accept인 데이터 조회
         List<User> foundFriends = friendRepository.findByUserAndStatus(user, ACCEPT);
@@ -53,18 +49,18 @@ public class FriendService {
     @Transactional
     public void deleteFriend(Long loginUserId, Long friendId) {
         // User 가져오기 (UserRepository 의존)
-        User loginUser = userRepository.findById(loginUserId).orElseThrow(NoSuchElementException::new);
-        User friend = userRepository.findById(friendId).orElseThrow(NoSuchElementException::new);
+        User loginUser = userRepository.findById(loginUserId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
+        User friend = userRepository.findById(friendId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
 
         // 두 사용자가 requester or receiver인 friendRequest 반환
-        FriendRequest foundFriendRequest = friendRepository.findInteractiveRequest(loginUser, friend).orElseThrow(NoSuchElementException::new);
+        FriendRequest foundFriendRequest = friendRepository.findInteractiveRequest(loginUser, friend).orElseThrow(() -> new CustomException(INVALID_FRIEND_REQUEST));
 
         // Status가 Accept인 경우 DELETED로 변경
         if (foundFriendRequest.getStatus() == ACCEPT) {
             foundFriendRequest.setStatus(DELETED);
         }else{
             // Status가 Accept가 아닌 경우 예외 발생
-            throw new NotFriendException();
+            throw new CustomException(INVALID_FRIEND_REQUEST);
         }
     }
 
@@ -77,8 +73,8 @@ public class FriendService {
     @Transactional
     public void requestFriend(Long loginUserId, Long userId) {
         // User 가져오기 (UserRepository 의존)
-        User requester = userRepository.findById(loginUserId).orElseThrow(NoSuchElementException::new);
-        User receiver = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
+        User requester = userRepository.findById(loginUserId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
+        User receiver = userRepository.findById(userId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
 
         // FriendRequest에서 데이터 조회
         Optional<FriendRequest> foundFriendRequest = friendRepository.findInteractiveRequest(requester, receiver);
@@ -92,7 +88,7 @@ public class FriendService {
             foundFriendRequest.get().setStatus(PENDING);
         }else{
             // Status가 PENDING or ACCEPT인 경우 예외 발생
-            throw new AlreadyProcessedException();
+            throw new CustomException(CONFLICT_STATUS);
         }
     }
 
@@ -105,18 +101,18 @@ public class FriendService {
     @Transactional
     public void acceptRequest(Long loginUserId, Long userId) {
         // 전달받은 id값을 가지는 사용자가 있는지 확인 (UserRepository 의존)
-        User receiver = userRepository.findById(loginUserId).orElseThrow(NoSuchElementException::new);
-        User requester = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
+        User receiver = userRepository.findById(loginUserId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
+        User requester = userRepository.findById(userId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
 
         // 상대 유저가 requester, 로그인 유저가 receiver인 friendRequest 반환
-        FriendRequest foundFriendRequest = friendRepository.findByReceiverAndRequester(receiver, requester).orElseThrow(NoSuchElementException::new);
+        FriendRequest foundFriendRequest = friendRepository.findByReceiverAndRequester(receiver, requester).orElseThrow(() -> new CustomException(INVALID_FRIEND_REQUEST));
 
         // Status가 PENDING 상태인 경우 ACCEPT로 변경
         if (foundFriendRequest.getStatus() == PENDING) {
             foundFriendRequest.setStatus(ACCEPT);
         }else {
             // Status가 PENDING이 아닌 경우 예외 발생(이미 요청을 거절, 수락하거나 친구 삭제한 경우)
-            throw new AlreadyProcessedException();
+            throw new CustomException(INVALID_FRIEND_REQUEST);
         }
     }
 
@@ -129,18 +125,18 @@ public class FriendService {
     @Transactional
     public void rejectRequest(Long loginUserId, Long userId) {
         // User 가져오기 (UserRepository 의존)
-        User receiver = userRepository.findById(loginUserId).orElseThrow(NoSuchElementException::new);
-        User requester = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
+        User receiver = userRepository.findById(loginUserId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
+        User requester = userRepository.findById(userId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
 
         // 상대 유저가 requester, 로그인 유저가 receiver인 friendRequest 반환
-        FriendRequest foundFriendRequest = friendRepository.findByReceiverAndRequester(receiver, requester).orElseThrow(NoSuchElementException::new);
+        FriendRequest foundFriendRequest = friendRepository.findByReceiverAndRequester(receiver, requester).orElseThrow(() -> new CustomException(INVALID_FRIEND_REQUEST));
 
         // Status가 PENDING 상태인 경우 REJECT로 변경
         if (foundFriendRequest.getStatus() == PENDING) {
             foundFriendRequest.setStatus(REJECT);
         }else{
             // Status가 PENDING이 아닌 경우 예외 발생(이미 요청을 거절, 수락하거나 친구 삭제한 경우)
-            throw new AlreadyProcessedException();
+            throw new CustomException(INVALID_FRIEND_REQUEST);
         }
     }
 
@@ -151,7 +147,7 @@ public class FriendService {
      */
     public List<FriendRequestResponseDto> findSentRequests(Long userId) {
         // User 가져오기 (UserRepository 의존)
-        User user = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
 
         // user가 requester인 friendRequest 반환
         List<FriendRequest> foundRequests = friendRepository.findByRequester(user);
@@ -168,7 +164,7 @@ public class FriendService {
      */
     public List<FriendRequestResponseDto> findReceivedRequests(Long userId) {
         // User 가져오기 (UserRepository 의존)
-        User user = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
 
         // user가 receiver인 friendRequest 반환
         List<FriendRequest> foundRequests = friendRepository.findByReceiver(user);
