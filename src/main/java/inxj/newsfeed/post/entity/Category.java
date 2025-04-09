@@ -9,9 +9,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor
 @Table(name="category")
 public class Category {
   @Id
@@ -19,6 +21,10 @@ public class Category {
   private Long id;    // 카테고리 식별자
 
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private CategoryType categoryType;      // 카테고리 이름
+
+  public Category(CategoryType categoryType) {
+    this.categoryType = categoryType;
+  }
 }
