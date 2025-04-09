@@ -12,7 +12,6 @@ import inxj.newsfeed.post.entity.Category;
 import inxj.newsfeed.post.entity.CategoryType;
 import inxj.newsfeed.post.entity.Post;
 import inxj.newsfeed.post.entity.Visibility;
-import inxj.newsfeed.post.repository.CategoryRepository;
 import inxj.newsfeed.post.repository.PostRepository;
 import inxj.newsfeed.user.User;
 import inxj.newsfeed.user.UserRepository;
@@ -26,8 +25,8 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 @RequiredArgsConstructor
 public class PostService {
+  private final PostCategoryService categoryService;
   private final PostRepository postRepository;
-  private final CategoryRepository categoryRepository;
   private final UserRepository userRepository;
   private final FriendRepository friendRepository;
 
@@ -114,7 +113,7 @@ public class PostService {
 
     // List <CategoryType> --> List <Category>
     // 중복값은 JPA IN 쿼리에서 자동으로 무시
-    List<Category> categoryList = categoryRepository.findByCategoryTypeIn(categoryTypeList);
+    List<Category> categoryList = categoryService.getCategoryByType(categoryTypeList);
 
     // 모든 전체 공개 게시글을 카테고리 별로 조회
     List<Post> postList = postRepository.findAllByVisibilityAndCategoryIdsIn(Visibility.PUBLIC, categoryList);
@@ -132,7 +131,8 @@ public class PostService {
 
     // 수정 대상 게시글 작성자가 현재 로그인한 사용자와 동일하다면
     if(loginId.equals(targetUser.getId())) {
-      targetPost.update(requestDTO);    // 업데이트
+
+      targetPost.update(requestDTO, categoryList);    // 업데이트
     }
     // 일치하지 않는 경우
     else {
