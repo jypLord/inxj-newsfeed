@@ -1,57 +1,71 @@
-package comment;
+package inxj.newsfeed.comment;
 
+import inxj.newsfeed.exception.CustomException;
+import inxj.newsfeed.exception.ErrorCode;
+import inxj.newsfeed.post.entity.Post;
 import inxj.newsfeed.user.User;
+import inxj.newsfeed.user.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @RequiredArgsConstructor
+@Service
 public class CommentService {
+
     private final CommentRepository commentRepository;
-//    private final PostRepository postRepository;
-//    private final UserRepository userRepository;
+    private final PostRepository postRepository;
+    private final UserRepository userRepository;
+
     //생성
-    public void saveComment(Long id,Long postId,RequestDto requestDto){
-//        User user= userRepository.findUserById(id)
-//        .orElseThrow(()->new RuntimeException("나중에 custom으로해요"));
-//
-//        Post post= postRepository.findPostById(postId)
-//        .orElseThrow(()->new RuntimeException("나중에 custom으로해요"));
+    public void saveComment(Long id, Long postId, RequestDto requestDto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER_ID));
 
-        CommentEntity commentEntity=new CommentEntity(user,post,requestDto.comment);
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST_ID));
 
-        commentRepository.save(commentEntity);
+        Comment comment = new Comment(user, post, requestDto.getComment());
+
+        commentRepository.save(comment);
     }
+
     //전체조회 paging 할까요?
     @Transactional(readOnly = true)
-    public List<ResponseDto> findComment(){
-        return commentRepository.findAll().stream()
-                .map(commentEntity ->new ResponseDto(commentEntity.getId(),
+    public List<ResponseDto> findComment(Long postId) {
+
+        return commentRepository.findByPostId(postId).stream()
+                .map(commentEntity -> new ResponseDto(commentEntity.getId(),
                         commentEntity.getContent(),
                         commentEntity.getCreatedAt(),
                         commentEntity.getUpdatedAt()))
                 .toList();
     }
+
     //수정
     @Transactional
-    public void updateComment(Long userId,Long commentId,ResponseDto responseDto){
+    public void updateComment(Long userId, Long commentId, RequestDto requestDto) {
 
-        CommentEntity commentEntity=commentRepository.findById(commentId).
-                orElseThrow(()->new RuntimeException("나중에 custom으로해요"));
+        Comment comment = commentRepository.findById(commentId).
+                orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COMMENT_ID));
 
-        if (userId != commentEntity.getUser().getId()){
-            throw new RuntimeException("나중에 custom으로해요");
+        if (!userId.equals(comment.getUser().getId())) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_USER_ID);
         }
 
-        commentEntity.updateContent(responseDto.content);
-
+        comment.updateContent(requestDto.getComment());
     }
+
     //삭제
-    public void deleteComment(Long userId,Long commentId){
+    public void deleteComment(Long userId, Long commentId) {
+        Comment comment = commentRepository.findById(commentId).
+                orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COMMENT_ID));
+        if (!userId.equals(comment.user.getId())) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_USER_ID);
+        }
         commentRepository.deleteById(commentId);
     }
-
 
 }

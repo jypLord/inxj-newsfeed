@@ -1,5 +1,4 @@
-package baseEntity;
-
+package inxj.newsfeed.common.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
@@ -16,6 +15,7 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
