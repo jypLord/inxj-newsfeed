@@ -14,7 +14,6 @@ public enum ErrorCode {
     INVALID_USER_ID("유효하지 않은 사용자 ID입니다.", HttpStatus.BAD_REQUEST, 400),
     INVALID_POST_ID("유효하지 않은 게시글 ID입니다.", HttpStatus.BAD_REQUEST, 400),
     INVALID_FRIEND_REQUEST("유효하지 않은 요청입니다.", HttpStatus.BAD_REQUEST, 400),
-
     //401 UNAUTHORIZED
     UNAUTHORIZED_USER_ID("유효하지 않은 게시글 ID입니다.", HttpStatus.UNAUTHORIZED, 401),
 
