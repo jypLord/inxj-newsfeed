@@ -11,11 +11,11 @@ import inxj.newsfeed.like.repository.PostLikeRepository;
 import inxj.newsfeed.post.entity.Post;
 import inxj.newsfeed.user.User;
 import inxj.newsfeed.user.UserRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
-@AllArgsConstructor // 생성자가 한 개인 경우 자동으로 @Autowired 가 붙음
+@RequiredArgsConstructor // 생성자가 한 개인 경우 자동으로 @Autowired 가 붙음
 public class EntityFetcher {
 
     private final UserRepository userRepository;
