@@ -1,6 +1,5 @@
 package baseEntity;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
@@ -14,14 +13,13 @@ import java.time.LocalDateTime;
 
 @Getter
 @MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
-public class BaseEntity {
+@EntityListeners(AuditingEntityListener.class) // JPA Auditing 활성화
+public abstract class BaseEntity {
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
     @Setter
-    @LastModifiedDate
+    @LastModifiedDate  // 수정 시간 자동 업데이트
     private LocalDateTime updatedAt;
-
 }
