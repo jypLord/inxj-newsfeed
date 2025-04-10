@@ -53,7 +53,7 @@ public class CommentService {
     @Transactional
     public void updateComment(Long userId, Long commentId, RequestDto requestDto) {
 
-        Comment comment = commentRepository.findById(commentId).
+        Comment comment = commentRepository.findWithUserAndPostUserById(commentId).
                 orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COMMENT_ID));
 
         if (!userId.equals(comment.getUser().getId())&&!userId.equals(comment.getPost().getUser().getId())) {
