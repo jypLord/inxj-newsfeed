@@ -17,6 +17,9 @@ public enum ErrorCode {
     //401 UNAUTHORIZED
     UNAUTHORIZED_USER_ID("유효하지 않은 게시글 ID입니다.", HttpStatus.UNAUTHORIZED, 401),
 
+    // 403 Forbidden
+    FORBIDDEN_POST("게시글에 접근할 수 없습니다.", HttpStatus.FORBIDDEN, 403),
+
     // 404 Not Found
     NOT_FOUND_EMAIL("이메일을 찾을 수 없습니다.", HttpStatus.NOT_FOUND, 404),
     NOT_FOUND_PASSWORD("비밀번호를 찾을 수 없습니다.", HttpStatus.NOT_FOUND, 404),
