@@ -64,8 +64,8 @@ public class UserService {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
 
-        if (user.getDeletedAt() != null) {
-            session.setAttribute("loginUser", user);
+        if (user.getDeletedAt() == null) {
+            session.setAttribute("loginUser", user.getId());
         } else {
             throw new CustomException(ErrorCode.INVALID_USER_ID);
         }

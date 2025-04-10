@@ -1,6 +1,7 @@
 package inxj.newsfeed.post.service;
 
 import inxj.newsfeed.exception.CustomException;
+import inxj.newsfeed.friend.entity.FriendRequest;
 import inxj.newsfeed.friend.repository.FriendRepository;
 import inxj.newsfeed.post.dto.PostCreateRequestDto;
 import inxj.newsfeed.post.dto.PostResponseDto;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static inxj.newsfeed.exception.ErrorCode.INVALID_USER_ID;
@@ -49,7 +51,10 @@ public class PostService {
         // 다른 사용자의 친구 공개 게시글
         if (post.getVisibility() == Visibility.FRIENDS && !(post.getUser().getId().equals(userId))) {
             User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
-            List<User> friendList = friendRepository.findByUserAndStatus(user, ACCEPT);
+            List<User> friendList = friendRepository.findByUserAndStatus(user, ACCEPT).stream()
+                    .map(friendRequest ->
+                            friendRequest.getReceiver().equals(user) ? friendRequest.getRequester() : friendRequest.getReceiver())
+                    .toList();
 
             // 게시글 작성자와 친구가 아니라면
             if (!friendList.contains(user)) {
@@ -72,7 +77,10 @@ public class PostService {
         User user = userRepository.findById(loginId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
 
         // 친구 목록 조회
-        List<User> friendList = friendRepository.findByUserAndStatus(user, ACCEPT);
+        List<User> friendList = friendRepository.findByUserAndStatus(user, ACCEPT).stream()
+                .map(friendRequest ->
+                        friendRequest.getReceiver().equals(user) ? friendRequest.getRequester() : friendRequest.getReceiver())
+                .toList();
 
         // 친구인 사용자들의 모든 친구 공개 게시글 조회
         List<Post> postList = postRepository.findAllByVisibilityAndUserInOrderByCreatedAtDesc(Visibility.FRIENDS, friendList);
@@ -93,7 +101,10 @@ public class PostService {
         // 다른 유저의 모든 게시글을 조회
         else {
             User user = userRepository.findById(loginId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
-            List<User> friendList = friendRepository.findByUserAndStatus(user, ACCEPT);
+            List<User> friendList = friendRepository.findByUserAndStatus(user, ACCEPT).stream()
+                    .map(friendRequest ->
+                            friendRequest.getReceiver().equals(user) ? friendRequest.getRequester() : friendRequest.getReceiver())
+                    .toList();
 
             // 친구라면 전체 공개와 친구 공개 게시글 조회
             if (friendList.contains(user)) {
