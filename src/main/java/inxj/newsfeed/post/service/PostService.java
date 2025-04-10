@@ -32,13 +32,12 @@ public class PostService {
     private final FriendRepository friendRepository;
 
     // TODO: CustomException 반영
-
     // 게시글 작성
     public void save(PostCreateRequestDto requestDTO, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(()
-                -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 유저 id = " + userId)); // 사용자 찾기
-        List<Category> categoryList = categoryService.getCategoryByType(requestDTO.getCategoryTypes()); // CategoryType --> Category 변환
-        postRepository.save(new Post(requestDTO, user, categoryList));
+      User user = userRepository.findById(userId).orElseThrow(()
+          -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 유저 id = "+userId)); // 사용자 찾기
+      List<Category> categoryList = categoryService.getCategoryByType(requestDTO.getCategoryTypes()); // CategoryType --> Category 변환
+      postRepository.save(new Post(requestDTO, user, categoryList));
     }
 
     // 게시글 단건 조회
@@ -62,7 +61,7 @@ public class PostService {
     // 모든 전체 공개 게시글 조회
     public List<PostResponseDto> findAllPublicPosts() {
         // 전체 공개 게시글에 대하여 작성일자 내림차순 조회
-        List<Post> postList = postRepository.findAllByVisibilityOrderByCreatedAtDesc(Visibility.PUBLIC);
+        List<Post> postList = postRepository.findAllByVisibility(Visibility.PUBLIC);
         return postList.stream()
                 .map(PostResponseDto::new).toList();
     }
@@ -75,7 +74,7 @@ public class PostService {
         List<User> friendList = friendRepository.findByUserAndStatus(user, ACCEPT);
 
         // 친구인 사용자들의 모든 친구 공개 게시글 조회
-        List<Post> postList = postRepository.findAllByVisibilityAndUserInOrderByCreatedAtDesc(Visibility.FRIENDS, friendList);
+        List<Post> postList = postRepository.findAllFriendVisible(Visibility.FRIENDS, friendList);
         return postList.stream()
                 .map(PostResponseDto::new).toList();
     }
@@ -88,7 +87,7 @@ public class PostService {
 
         // 자신의 모든 게시글을 조회
         if (targetUserId.equals(loginId)) {
-            postList = postRepository.findAllByUserOrderByCreatedAtDesc(targetUser);
+            postList = postRepository.findAllByUser(targetUser);
         }
         // 다른 유저의 모든 게시글을 조회
         else {
@@ -97,11 +96,11 @@ public class PostService {
 
             // 친구라면 전체 공개와 친구 공개 게시글 조회
             if (friendList.contains(user)) {
-                postList = postRepository.findAllByUserOrderByCreatedAtDesc(targetUser);
+                postList = postRepository.findAllByUser(targetUser);
             }
             // 전체 공개 게시글만 조회
             else {
-                postList = postRepository.findAllByUserAndVisibilityOrderByCreatedAtDesc(targetUser, Visibility.PUBLIC);
+                postList = postRepository.findAllByUserAndVisibility(targetUser, Visibility.PUBLIC);
             }
         }
 
@@ -117,7 +116,7 @@ public class PostService {
         List<Category> categoryList = categoryService.getCategoryByType(categoryTypeList); // CategoryType --> Category 변환
 
         // 모든 전체 공개 게시글을 카테고리 별로 조회
-        List<Post> postList = postRepository.findAllByVisibilityAndCategoryIdsIn(Visibility.PUBLIC, categoryList);
+        List<Post> postList = postRepository.findAllByCategoryAndVisibility(Visibility.PUBLIC, categoryList);
 
         return postList.stream()
                 .map(PostResponseDto::new).toList();

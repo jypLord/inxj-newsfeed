@@ -46,7 +46,7 @@ public class PostController {
   // TODO: Category List 검증 로직 필요
   @GetMapping
   public ResponseEntity<List<PostResponseDto>> findAllPublicPosts(
-      @RequestParam(required = false) List<CategoryType> categoryTypeList, HttpSession session) {
+      @RequestParam(required = false) List<CategoryType> categoryTypeList) {
     if(categoryTypeList == null || categoryTypeList.isEmpty()) {
       return new ResponseEntity<>(postService.findAllPublicPosts(), HttpStatus.OK);
     }
@@ -64,7 +64,7 @@ public class PostController {
 
   // 사용자의 모든 게시글 조회
   // TODO: 유저 컨트롤러로 이동 고려 "/users/{userId}/posts"
-  @GetMapping("/users")
+  @GetMapping("/{targetUserId}")
   public ResponseEntity<List<PostResponseDto>> findAllByUser(@PathVariable Long targetUserId, HttpSession session) {
     Long loginId = (Long)session.getAttribute("loginUser");
     return new ResponseEntity<>(postService.findAllUserPosts(targetUserId, loginId), HttpStatus.OK);
