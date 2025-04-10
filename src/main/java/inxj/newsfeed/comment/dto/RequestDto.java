@@ -1,4 +1,4 @@
-package inxj.newsfeed.comment;
+package inxj.newsfeed.comment.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;

@@ -1,4 +1,4 @@
-package inxj.newsfeed.comment;
+package inxj.newsfeed.comment.entity;
 
 import inxj.newsfeed.common.entity.BaseEntity;
 import inxj.newsfeed.post.entity.Post;

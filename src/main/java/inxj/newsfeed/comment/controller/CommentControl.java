@@ -1,5 +1,8 @@
-package inxj.newsfeed.comment;
+package inxj.newsfeed.comment.controller;
 
+import inxj.newsfeed.comment.dto.RequestDto;
+import inxj.newsfeed.comment.dto.ResponseDto;
+import inxj.newsfeed.comment.service.CommentService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -1,5 +1,6 @@
-package inxj.newsfeed.comment;
+package inxj.newsfeed.comment.repository;
 
+import inxj.newsfeed.comment.entity.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

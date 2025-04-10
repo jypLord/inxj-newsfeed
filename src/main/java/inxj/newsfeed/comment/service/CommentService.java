@@ -1,5 +1,9 @@
-package inxj.newsfeed.comment;
+package inxj.newsfeed.comment.service;
 
+import inxj.newsfeed.comment.entity.Comment;
+import inxj.newsfeed.comment.repository.CommentRepository;
+import inxj.newsfeed.comment.dto.RequestDto;
+import inxj.newsfeed.comment.dto.ResponseDto;
 import inxj.newsfeed.exception.CustomException;
 import inxj.newsfeed.exception.ErrorCode;
 import inxj.newsfeed.post.entity.Post;
@@ -52,7 +56,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId).
                 orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COMMENT_ID));
 
-        if (!userId.equals(comment.getUser().getId())) {
+        if (!userId.equals(comment.getUser().getId())&&!userId.equals(comment.getPost().getUser().getId())) {
             throw new CustomException(ErrorCode.UNAUTHORIZED_USER_ID);
         }
 
@@ -63,7 +67,7 @@ public class CommentService {
     public void deleteComment(Long userId, Long commentId) {
         Comment comment = commentRepository.findById(commentId).
                 orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COMMENT_ID));
-        if (!userId.equals(comment.user.getId())) {
+        if (!userId.equals(comment.getUser().getId())&&!userId.equals(comment.getPost().getUser().getId())) {
             throw new CustomException(ErrorCode.UNAUTHORIZED_USER_ID);
         }
         commentRepository.deleteById(commentId);
