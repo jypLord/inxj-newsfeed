@@ -1,42 +1,43 @@
 package inxj.newsfeed.like.service;
 
 import inxj.newsfeed.comment.Comment;
-import inxj.newsfeed.comment.CommentRepository;
-import inxj.newsfeed.common.enums.Message;
+import inxj.newsfeed.exception.CustomException;
+import inxj.newsfeed.exception.ErrorCode;
 import inxj.newsfeed.like.entity.CommentLike;
 import inxj.newsfeed.like.entity.CommentLikeId;
 import inxj.newsfeed.like.repository.CommentLikeRepository;
 import inxj.newsfeed.user.User;
-import inxj.newsfeed.user.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
-
 @Service
+@RequiredArgsConstructor // 생성자가 한 개인 경우 자동으로 @Autowired 가 붙음
 public class CommentLikeService {
 
     private final CommentLikeRepository commentLikeRepository;
-    private final CommentRepository commentRepository;
-    private final UserRepository userRepository;
+    private final EntityFetcher entityFetcher;
 
-    @Autowired
-    public CommentLikeService(CommentLikeRepository commentLikeRepository, CommentRepository commentRepository, UserRepository userRepository) {
-        this.commentLikeRepository = commentLikeRepository;
-        this.commentRepository = commentRepository;
-        this.userRepository = userRepository;
-    }
     public void like(Long commentId, Long userId) {
-        Comment comment = commentRepository.findById(commentId);
-        User user = userRepository.findById(userId);
-        CommentLikeId id = new CommentLikeId(commentId, userId);
-        commentLikeRepository.save(new CommentLike(id, comment, user));
+        // 복합키 생성
+        Comment comment = entityFetcher.getCommentOrThrow(commentId);
+        User user = entityFetcher.getUserOrThrow(userId);
+        CommentLikeId commentLikeId = new CommentLikeId(commentId, userId);
+
+        // 중복 체크
+        if (commentLikeRepository.findById(commentLikeId).isPresent()) {
+            throw new CustomException(ErrorCode.CONFLICT_STATUS);
+        }
+
+        // 저장
+        commentLikeRepository.save(new CommentLike(commentLikeId, comment, user));
     }
 
     public void unlike(Long commentId, Long userId) {
-        CommentLikeId id = new CommentLikeId(commentId, userId);
-        CommentLike found = commentLikeRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException(Message.NO_ELEMENT.get()));
+        // 복합키로 데이터 검색
+        CommentLikeId commentLikeId = new CommentLikeId(commentId, userId);
+        CommentLike found = entityFetcher.getCommentLikeOrThrow(commentLikeId);
+
+        // 삭제
         commentLikeRepository.delete(found);
     }
 
