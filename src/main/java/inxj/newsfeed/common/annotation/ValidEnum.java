@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD, ElementType.PARAMETER}) // 검증 대상 (필드, 파라미터)
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = EnumValidator.class)    // 검증 구현체
+@Constraint(validatedBy = {EnumValidator.class, EnumListValidator.class})    // 검증 구현체
 public @interface ValidEnum {
   String message() default "지원하는 값은 [{enumValues}] 입니다.";
 

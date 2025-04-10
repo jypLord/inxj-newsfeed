@@ -2,13 +2,12 @@ package inxj.newsfeed.common.annotation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import jakarta.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class EnumValidator implements ConstraintValidator<ValidEnum, String> {
+public class EnumListValidator implements ConstraintValidator<ValidEnum, List<String>> {
   private Set<String> allowedValues;    // enum 내 유효값
   private String messageTemplate;
 
@@ -21,28 +20,29 @@ public class EnumValidator implements ConstraintValidator<ValidEnum, String> {
     messageTemplate = convertMessageTemplate(constraintAnnotation.message());
   }
 
-  // 단일 Enum 유효값 검증 메소드
+  // List<Enum> 유효값 검증 메소드
   @Override
-  public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
-    if(value == null) {
+  public boolean isValid(List<String> values, ConstraintValidatorContext constraintValidatorContext) {
+    if(values == null) {
       return true;
     }
-    String convertedValue = checkIgnoreCase(value);  // 대소문자 무시
+    List<String> convertedValue = checkIgnoreCase(values);  // 대소문자 무시
 
-    // 유효값 검증
-    if(allowedValues.contains(convertedValue)) {
-      return true;
+    boolean valid = convertedValue.stream()
+        .allMatch(v -> convertedValue.contains(v));// 유효값 검증
+    if(valid) return true;
+    else {
+      constraintValidatorContext.disableDefaultConstraintViolation();
+      constraintValidatorContext.buildConstraintViolationWithTemplate(messageTemplate)
+          .addConstraintViolation();
+      return false;
     }
-    // 커스텀 메세지
-    constraintValidatorContext.disableDefaultConstraintViolation();
-    constraintValidatorContext.buildConstraintViolationWithTemplate(messageTemplate)
-        .addConstraintViolation();
-    return false;
   }
 
-  // 대소문자 무시
-  private String checkIgnoreCase(String value) {
-    return value.toUpperCase();
+  // 리스트 대소문자 무시
+  private List<String> checkIgnoreCase(List<String> values) {
+    return values.stream()
+        .map(String::toUpperCase).toList();
   }
 
   // 커스텀 메시지
