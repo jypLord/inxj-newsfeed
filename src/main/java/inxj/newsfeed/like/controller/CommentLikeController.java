@@ -2,21 +2,17 @@ package inxj.newsfeed.like.controller;
 
 import inxj.newsfeed.like.service.CommentLikeService;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/posts/{postId}/comments/{commentId}/likes")
 @RestController
+@RequiredArgsConstructor
 public class CommentLikeController {
 
     private final CommentLikeService commentLikeService;
-
-    @Autowired
-    public CommentLikeController(CommentLikeService commentLikeService) {
-        this.commentLikeService = commentLikeService;
-    }
 
     @PostMapping
     public ResponseEntity<Void> like(@PathVariable Long commentId, HttpSession session) {
