@@ -12,8 +12,8 @@ import inxj.newsfeed.like.repository.CommentLikeRepository;
 import inxj.newsfeed.like.repository.PostLikeRepository;
 import inxj.newsfeed.post.entity.Post;
 import inxj.newsfeed.post.repository.PostRepository;
-import inxj.newsfeed.user.User;
-import inxj.newsfeed.user.UserRepository;
+import inxj.newsfeed.user.entity.User;
+import inxj.newsfeed.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

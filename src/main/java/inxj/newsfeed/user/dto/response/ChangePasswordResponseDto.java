@@ -9,4 +9,4 @@ public class ChangePasswordResponseDto {
     
     private final String newPassword;
     
-}    
+}

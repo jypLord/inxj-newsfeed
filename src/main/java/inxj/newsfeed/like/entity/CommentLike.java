@@ -2,7 +2,7 @@ package inxj.newsfeed.like.entity;
 
 import inxj.newsfeed.comment.entity.Comment;
 import inxj.newsfeed.common.entity.BaseEntity;
-import inxj.newsfeed.user.User;
+import inxj.newsfeed.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;

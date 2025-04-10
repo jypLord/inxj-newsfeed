@@ -2,7 +2,7 @@ package inxj.newsfeed.friend.repository;
 
 import inxj.newsfeed.friend.entity.FriendRequest;
 import inxj.newsfeed.friend.entity.Status;
-import inxj.newsfeed.user.User;
+import inxj.newsfeed.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

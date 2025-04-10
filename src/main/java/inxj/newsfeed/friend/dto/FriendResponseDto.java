@@ -1,6 +1,6 @@
 package inxj.newsfeed.friend.dto;
 
-import inxj.newsfeed.user.User;
+import inxj.newsfeed.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

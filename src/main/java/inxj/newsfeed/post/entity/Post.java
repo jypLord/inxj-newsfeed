@@ -4,7 +4,7 @@ import inxj.newsfeed.common.entity.BaseEntity;
 import inxj.newsfeed.post.converter.StringListConverter;
 import inxj.newsfeed.post.dto.PostCreateRequestDto;
 import inxj.newsfeed.post.dto.PostUpdateRequestDto;
-import inxj.newsfeed.user.User;
+import inxj.newsfeed.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;

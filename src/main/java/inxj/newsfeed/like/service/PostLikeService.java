@@ -6,8 +6,7 @@ import inxj.newsfeed.like.entity.PostLike;
 import inxj.newsfeed.like.entity.PostLikeId;
 import inxj.newsfeed.like.repository.PostLikeRepository;
 import inxj.newsfeed.post.entity.Post;
-import inxj.newsfeed.user.User;
-import inxj.newsfeed.user.UserRepository;
+import inxj.newsfeed.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

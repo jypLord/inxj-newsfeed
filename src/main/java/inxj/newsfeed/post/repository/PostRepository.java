@@ -3,7 +3,7 @@ package inxj.newsfeed.post.repository;
 import inxj.newsfeed.post.entity.Category;
 import inxj.newsfeed.post.entity.Post;
 import inxj.newsfeed.post.entity.Visibility;
-import inxj.newsfeed.user.User;
+import inxj.newsfeed.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

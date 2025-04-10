@@ -6,7 +6,7 @@ import inxj.newsfeed.exception.ErrorCode;
 import inxj.newsfeed.like.entity.CommentLike;
 import inxj.newsfeed.like.entity.CommentLikeId;
 import inxj.newsfeed.like.repository.CommentLikeRepository;
-import inxj.newsfeed.user.User;
+import inxj.newsfeed.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
