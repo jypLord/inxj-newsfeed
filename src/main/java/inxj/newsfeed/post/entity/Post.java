@@ -2,8 +2,8 @@ package inxj.newsfeed.post.entity;
 
 import inxj.newsfeed.common.entity.BaseEntity;
 import inxj.newsfeed.post.converter.StringListConverter;
-import inxj.newsfeed.post.dto.PostCreateRequestDTO;
-import inxj.newsfeed.post.dto.PostUpdateRequestDTO;
+import inxj.newsfeed.post.dto.PostCreateRequestDto;
+import inxj.newsfeed.post.dto.PostUpdateRequestDto;
 import inxj.newsfeed.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -52,7 +52,7 @@ public class Post extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private Visibility visibility;  // 공개 범위(Enum String 값 저장)
 
-  public Post(PostCreateRequestDTO requestDTO, User user, List<Category> categoryList) {
+  public Post(PostCreateRequestDto requestDTO, User user, List<Category> categoryList) {
     this.user = user;
     this.content = requestDTO.getContent();
     this.categoryIds = categoryList;
@@ -61,7 +61,7 @@ public class Post extends BaseEntity {
   }
 
   // 업데이트 포스트
-  public void update(PostUpdateRequestDTO requestDTO, List<Category> categoryList) {
+  public void update(PostUpdateRequestDto requestDTO, List<Category> categoryList) {
     // 변경 사항이 있다면 업데이트
     if(requestDTO.getContent() != null) {
       this.content = requestDTO.getContent();

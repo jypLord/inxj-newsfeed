@@ -1,8 +1,8 @@
 package inxj.newsfeed.post.controller;
 
-import inxj.newsfeed.post.dto.PostCreateRequestDTO;
-import inxj.newsfeed.post.dto.PostResponseDTO;
-import inxj.newsfeed.post.dto.PostUpdateRequestDTO;
+import inxj.newsfeed.post.dto.PostCreateRequestDto;
+import inxj.newsfeed.post.dto.PostResponseDto;
+import inxj.newsfeed.post.dto.PostUpdateRequestDto;
 import inxj.newsfeed.post.entity.CategoryType;
 import inxj.newsfeed.post.service.PostService;
 import jakarta.servlet.http.HttpSession;
@@ -28,7 +28,7 @@ public class PostController {
 
   // 게시글 생성
   @PostMapping
-  public ResponseEntity<Void> create(@RequestBody PostCreateRequestDTO requestDTO, HttpSession session) {
+  public ResponseEntity<Void> create(@RequestBody PostCreateRequestDto requestDTO, HttpSession session) {
     Long userId = (Long)session.getAttribute("loginUser");
     postService.save(requestDTO, userId);
     return new ResponseEntity<>(HttpStatus.CREATED);
@@ -36,7 +36,7 @@ public class PostController {
 
   // 게시글 단건 조회
   @GetMapping("/{postId}")
-  public ResponseEntity<PostResponseDTO> find(@PathVariable Long postId, HttpSession session) {
+  public ResponseEntity<PostResponseDto> find(@PathVariable Long postId, HttpSession session) {
     Long userId = (Long)session.getAttribute("loginUser");
     return new ResponseEntity<>(postService.find(postId, userId), HttpStatus.OK);
   }
@@ -45,7 +45,7 @@ public class PostController {
   // 조건: 전체, 카테고리
   // TODO: Category List 검증 로직 필요
   @GetMapping
-  public ResponseEntity<List<PostResponseDTO>> findAllPublicPosts(
+  public ResponseEntity<List<PostResponseDto>> findAllPublicPosts(
       @RequestParam(required = false) List<CategoryType> categoryTypeList, HttpSession session) {
     if(categoryTypeList == null || categoryTypeList.isEmpty()) {
       return new ResponseEntity<>(postService.findAllPublicPosts(), HttpStatus.OK);
@@ -57,7 +57,7 @@ public class PostController {
 
   // 모든 친구 공개 게시글 조회
   @GetMapping("/friends")
-  public ResponseEntity<List<PostResponseDTO>> findAllFriendPosts(HttpSession session) {
+  public ResponseEntity<List<PostResponseDto>> findAllFriendPosts(HttpSession session) {
     Long userId = (Long)session.getAttribute("loginUser");
     return new ResponseEntity<>(postService.findAllFriendPosts(userId), HttpStatus.OK);
   }
@@ -65,7 +65,7 @@ public class PostController {
   // 사용자의 모든 게시글 조회
   // TODO: 유저 컨트롤러로 이동 고려 "/users/{userId}/posts"
   @GetMapping("/users")
-  public ResponseEntity<List<PostResponseDTO>> findAllByUser(@PathVariable Long targetUserId, HttpSession session) {
+  public ResponseEntity<List<PostResponseDto>> findAllByUser(@PathVariable Long targetUserId, HttpSession session) {
     Long loginId = (Long)session.getAttribute("loginUser");
     return new ResponseEntity<>(postService.findAllUserPosts(targetUserId, loginId), HttpStatus.OK);
   }
@@ -73,7 +73,7 @@ public class PostController {
   // 게시글 수정
   @PatchMapping("/{postId}")
   public ResponseEntity<Void> updatePost(
-      @PathVariable Long postId, @RequestBody PostUpdateRequestDTO requestDTO, HttpSession session) {
+      @PathVariable Long postId, @RequestBody PostUpdateRequestDto requestDTO, HttpSession session) {
     Long loginId = (Long)session.getAttribute("loginUser");
     postService.updatePost(postId, requestDTO, loginId);
     return new ResponseEntity<>(HttpStatus.OK);
