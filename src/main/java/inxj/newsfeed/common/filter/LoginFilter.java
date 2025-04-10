@@ -30,7 +30,7 @@ public class LoginFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        // 로그인 필터가 적용되는 요청인지 검사
+        // EXCLUDE_URLS 의 링크는 로그인 필터를 실행하지 않음
         for (AntPathRequestMatcher matcher : EXCLUDE_URLS) {
             if (matcher.matches(request)) {
                 filterChain.doFilter(request, response);
