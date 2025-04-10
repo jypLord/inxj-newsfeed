@@ -11,8 +11,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-  // TODO: 메소드명 다시 짓거나 줄이기
-
     // 모든 게시글을 게시글 공개 범위에 따라 생성일 순으로 조회
     @Query("SELECT p FROM Post p WHERE p.visibility = :visibility ORDER BY p.createdAt DESC")
     List<Post> findAllByVisibility(@Param("visibility") Visibility visibility);
