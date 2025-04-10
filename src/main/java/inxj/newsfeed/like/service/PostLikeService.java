@@ -1,5 +1,6 @@
 package inxj.newsfeed.like.service;
 
+import inxj.newsfeed.common.util.EntityFetcher;
 import inxj.newsfeed.exception.CustomException;
 import inxj.newsfeed.exception.ErrorCode;
 import inxj.newsfeed.like.entity.PostLike;

@@ -1,4 +1,4 @@
-package inxj.newsfeed.like.service;
+package inxj.newsfeed.common.util;
 
 import inxj.newsfeed.comment.entity.Comment;
 import inxj.newsfeed.comment.repository.CommentRepository;
