@@ -4,16 +4,13 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
-
-
 
 @Entity
 @Getter 
 @Setter
 @NoArgsConstructor
-public class User extends BaseEntity{
+public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,7 +24,6 @@ public class User extends BaseEntity{
     @Column(unique = true)
     private String username;
 
-    
     private String name;
 
     private LocalDateTime birthday;
