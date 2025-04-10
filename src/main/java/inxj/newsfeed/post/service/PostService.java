@@ -14,10 +14,9 @@ import inxj.newsfeed.post.repository.PostRepository;
 import inxj.newsfeed.user.entity.User;
 import inxj.newsfeed.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
+
 import static inxj.newsfeed.exception.ErrorCode.*;
 import static inxj.newsfeed.friend.entity.Status.*;
 
@@ -39,7 +38,7 @@ public class PostService {
       postRepository.save(new Post(requestDTO, user, categoryList));
     }
 
-    // 게시글 단건 조회
+    // 게시글 단건 조회    // TODO: 친구 목록 불러오는 로직 다시 확인필요
     public PostResponseDto find(Long postId, Long userId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(
             NOT_FOUND_POST_ID));

@@ -9,8 +9,8 @@ import lombok.Getter;
 
 @Getter
 public class PostResponseDto {
-  private final String content;
-  private final List<String> imgUrls;
+  private final java.lang.String content;
+  private final List<java.lang.String> imgUrls;
   private final List<CategoryType> categoryTypes;
   private final Visibility visibility;
 

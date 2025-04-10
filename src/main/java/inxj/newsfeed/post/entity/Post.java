@@ -40,13 +40,13 @@ public class Post extends BaseEntity {
   private User user; // 사용자와 N:1 연관관계 (사용자 id 맵핑)
 
   @Column(nullable = false)
-  private String content;   // 내용
+  private java.lang.String content;   // 내용
 
   @OneToMany(fetch = FetchType.LAZY)
   private List<Category> categoryIds;  // 카테고리
 
   @Convert(converter = StringListConverter.class)
-  private List<String> imgUrls; // 이미지 URLs
+  private List<java.lang.String> imgUrls; // 이미지 URLs
 
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
@@ -57,7 +57,7 @@ public class Post extends BaseEntity {
     this.content = requestDTO.getContent();
     this.categoryIds = categoryList;
     this.imgUrls = requestDTO.getImgUrls();
-    this.visibility = requestDTO.getVisibility();
+    this.visibility = requestDTO.getString();
   }
 
   // 업데이트 포스트
@@ -73,7 +73,7 @@ public class Post extends BaseEntity {
       this.imgUrls = requestDTO.getImgUrls();
     }
     if(requestDTO.getContent() != null) {
-      this.visibility = requestDTO.getVisibility();
+      this.visibility = requestDTO.getString();
     }
   }
 }
