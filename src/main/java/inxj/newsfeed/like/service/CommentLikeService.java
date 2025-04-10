@@ -1,6 +1,6 @@
 package inxj.newsfeed.like.service;
 
-import inxj.newsfeed.comment.Comment;
+import inxj.newsfeed.comment.entity.Comment;
 import inxj.newsfeed.exception.CustomException;
 import inxj.newsfeed.exception.ErrorCode;
 import inxj.newsfeed.like.entity.CommentLike;

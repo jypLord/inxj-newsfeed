@@ -1,4 +1,4 @@
-package inxj.newsfeed.comment;
+package inxj.newsfeed.comment.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
