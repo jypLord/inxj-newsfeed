@@ -1,15 +1,19 @@
 package inxj.newsfeed.user.controller;
 
-import inxj.newsfeed.user.dto.request.SignUpRequest;
-import inxj.newsfeed.user.dto.response.ProfileResponse;
-import inxj.newsfeed.user.dto.response.SignUpResponse;
+
+import inxj.newsfeed.user.dto.*;
 import inxj.newsfeed.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.http.HttpStatus;
+
 import javax.servlet.http.HttpSession;
+
+import java.util.List;
+import java.util.ArrayList;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,9 +37,31 @@ public class UserController {
         return ResponseEntity.ok(userService.viewProfile(id));
     }
 
-    @PutMapping("/user/{id}")
+    @PutMapping(value ="/users/{id}")
     public ResponseEntity<Void> modifyProfile(@PathVariable Long id, @RequestBody @Valid ModifyProfileRequest dto) {
         userService.modifyProfile(id, dto);  
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(value ="/users")
+    public ResponseEntity<List<UserSearchResponse>> searchUsers(@RequestParam String username){
+        
+        List<UserSearchResponse> response = userService.searchUsers(username);
+        
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+    @PostMapping(value = "/users/{id}/password")
+    public ResponseEntity<ChangePasswordResponse> iLostMyPassword(@PathVariable Long id){
+        
+
+        return new ResponseEntity<>(userService.changePassword(id), HttpStatus.OK);
+    }
+
+    @PatchMapping(value = "/users/{id}/deactive")
+    public ResponseEntity<Void> deactiveUser(@PathVariable Long id ,@RequestBody DeactiveRequest dto){
+        userService.deactiveUser(id, dto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
