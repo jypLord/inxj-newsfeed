@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -15,7 +16,7 @@ public class ProfileResponseDto {
     private final String name;
     private final String username;
     private final String email;
-    private final LocalDateTime birthday;
+    private final LocalDate birthday;
     private final String gender;
 
 }

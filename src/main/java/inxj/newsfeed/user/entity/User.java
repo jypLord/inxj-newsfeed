@@ -4,6 +4,7 @@ import inxj.newsfeed.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class User extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,7 +30,7 @@ public class User extends BaseEntity {
 
     private String name;
 
-    private LocalDateTime birthday;
+    private LocalDate birthday;
 
     private String gender;
 
@@ -38,4 +40,5 @@ public class User extends BaseEntity {
     private String profileImageUrl;
 
     private LocalDateTime deletedAt;
+
 }
