@@ -2,17 +2,16 @@ package inxj.newsfeed.user.service;
 
 import inxj.newsfeed.exception.CustomException;
 import inxj.newsfeed.exception.ErrorCode;
-import inxj.newsfeed.user.dto.request.DeactivateRequestDto;
-import inxj.newsfeed.user.dto.request.LoginRequestDto;
-import inxj.newsfeed.user.dto.request.SignUpRequestDto;
-import inxj.newsfeed.user.dto.request.UpdateProfileRequestDto;
+import inxj.newsfeed.user.dto.request.*;
 import inxj.newsfeed.user.dto.response.ChangePasswordResponseDto;
 import inxj.newsfeed.user.dto.response.ProfileResponseDto;
 import inxj.newsfeed.user.dto.response.SearchUsersResponseDto;
 import inxj.newsfeed.user.entity.User;
 import inxj.newsfeed.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,14 +56,14 @@ public class UserService {
     }
 
     public void login(LoginRequestDto dto, HttpSession session) {
+
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_EMAIL));
 
         if (!isPasswordValid(dto.getPassword(), user.getPassword())) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
-
-        if (user.getDeletedAt() == null) {
+        if (user.getDeletedAt()==null) {
             session.setAttribute("loginUser", user.getId());
         } else {
             throw new CustomException(ErrorCode.INVALID_USER_ID);
@@ -106,6 +105,20 @@ public class UserService {
         user.setProfileImageUrl(dto.getProfileImageUrl());
     }
 
+
+    @Transactional
+    public void modifyPassword(Long id, ModifyPasswordRequestDto requestDto){
+
+        User user = userRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.INVALID_USER_ID));
+
+        if (!isPasswordValid(requestDto.getOldPassword(),user.getPassword())){
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
+        }
+
+        user.setPassword(passwordEncoder.encode(requestDto.getNewPassword()));
+
+    }
+
     public List<SearchUsersResponseDto> searchUsers(String username) {
         List<User> users = userRepository.findByUsername(username);
 
@@ -122,7 +135,9 @@ public class UserService {
     public ChangePasswordResponseDto changePassword(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.INVALID_USER_ID));
 
-        return new ChangePasswordResponseDto(user.getPassword());
+        String password="12345678910";
+
+        return new ChangePasswordResponseDto(password);
     }
 
     @Transactional
@@ -134,7 +149,6 @@ public class UserService {
         }
 
         user.setDeletedAt(LocalDateTime.now());
-        userRepository.save(user);
     }
 
     public boolean isPasswordValid(String rawPassword, String encodedPassword) {

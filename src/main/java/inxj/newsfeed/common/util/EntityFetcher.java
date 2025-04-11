@@ -15,6 +15,7 @@ import inxj.newsfeed.post.repository.PostRepository;
 import inxj.newsfeed.user.entity.User;
 import inxj.newsfeed.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.sql.results.graph.entity.EntityFetch;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -28,6 +29,7 @@ public class EntityFetcher {
     private final CommentLikeRepository commentLikeRepository;
 
     public User getUserOrThrow(Long userId) {
+
         return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER_ID));
     }
