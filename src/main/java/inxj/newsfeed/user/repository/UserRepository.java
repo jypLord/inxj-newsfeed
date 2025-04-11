@@ -23,7 +23,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
 
     @Query("SELECT new inxj.newsfeed.user.dto.response.SearchUsersResponseDto(u.username,u.profileImageUrl)" +
-            " FROM User u WHERE u.username LIKE CONCAT('%', :username, '%') ")
+            " FROM User u WHERE u.username LIKE CONCAT('%', :username, '%') and u.deletedAt is null ")
     List<SearchUsersResponseDto> searchUsersByUsername(@Param("username") String username);
 
 
