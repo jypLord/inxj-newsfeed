@@ -1,21 +1,21 @@
 package inxj.newsfeed.common.util;
 
-import inxj.newsfeed.comment.entity.Comment;
-import inxj.newsfeed.comment.repository.CommentRepository;
+import inxj.newsfeed.domain.comment.entity.Comment;
+import inxj.newsfeed.domain.comment.repository.CommentRepository;
 import inxj.newsfeed.exception.CustomException;
 import inxj.newsfeed.exception.ErrorCode;
-import inxj.newsfeed.friend.entity.FriendRequest;
-import inxj.newsfeed.friend.repository.FriendRepository;
-import inxj.newsfeed.like.entity.CommentLike;
-import inxj.newsfeed.like.entity.CommentLikeId;
-import inxj.newsfeed.like.entity.PostLike;
-import inxj.newsfeed.like.entity.PostLikeId;
-import inxj.newsfeed.like.repository.CommentLikeRepository;
-import inxj.newsfeed.like.repository.PostLikeRepository;
-import inxj.newsfeed.post.entity.Post;
-import inxj.newsfeed.post.repository.PostRepository;
-import inxj.newsfeed.user.entity.User;
-import inxj.newsfeed.user.repository.UserRepository;
+import inxj.newsfeed.domain.friend.entity.FriendRequest;
+import inxj.newsfeed.domain.friend.repository.FriendRepository;
+import inxj.newsfeed.domain.like.entity.CommentLike;
+import inxj.newsfeed.domain.like.entity.CommentLikeId;
+import inxj.newsfeed.domain.like.entity.PostLike;
+import inxj.newsfeed.domain.like.entity.PostLikeId;
+import inxj.newsfeed.domain.like.repository.CommentLikeRepository;
+import inxj.newsfeed.domain.like.repository.PostLikeRepository;
+import inxj.newsfeed.domain.post.entity.Post;
+import inxj.newsfeed.domain.post.repository.PostRepository;
+import inxj.newsfeed.domain.user.entity.User;
+import inxj.newsfeed.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
