@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +23,7 @@ public interface FriendRepository extends JpaRepository<FriendRequest, Long> {
 
     Optional<FriendRequest> findByReceiverAndRequester(User receiver, User requester);
 
-    List<FriendRequest> findByRequester(User requester);
+    List<FriendRequest> findByRequesterAndStatusIn(User requester, Collection<Status> statuses);
 
-    List<FriendRequest> findByReceiver(User receiver);
+    List<FriendRequest> findByReceiverAndStatus(User user, Status status);
 }
