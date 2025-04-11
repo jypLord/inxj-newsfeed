@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
                         "timestamp", LocalDateTime.now(),
                         "status", errorCode.getHttpStatus().value(),
                         "error", errorCode.getHttpStatus().name(),
-                        "code", errorCode.getCode(),
+                        "code", errorCode.getErrorCode(),
                         "message", errorCode.getMessage(),
                         "path", request.getRequestURI()
                 ));

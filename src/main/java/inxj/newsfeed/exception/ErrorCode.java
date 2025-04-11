@@ -13,8 +13,11 @@ public enum ErrorCode {
     INVALID_USER_ID("유효하지 않은 사용자 ID입니다.", HttpStatus.BAD_REQUEST, "400-003"),
     INVALID_POST_ID("유효하지 않은 게시글 ID입니다.", HttpStatus.BAD_REQUEST, "400-004"),
     INVALID_FRIEND_REQUEST("유효하지 않은 요청입니다.", HttpStatus.BAD_REQUEST, "400-005"),
+    INVALID_CODE("유효하지 않은 인증번호입니다.", HttpStatus.UNAUTHORIZED, "400-006"),
+
 
     UNAUTHORIZED_USER_ID("인증되지 않은 사용자입니다.", HttpStatus.UNAUTHORIZED, "401-001"),
+    UNAUTHORIZED_CODE("인증되지 않은 인증번호입니다.", HttpStatus.UNAUTHORIZED, "401-002"),
 
     NOT_FOUND_EMAIL("이메일을 찾을 수 없습니다.", HttpStatus.NOT_FOUND, "404-001"),
     NOT_FOUND_PASSWORD("비밀번호를 찾을 수 없습니다.", HttpStatus.NOT_FOUND, "404-002"),
