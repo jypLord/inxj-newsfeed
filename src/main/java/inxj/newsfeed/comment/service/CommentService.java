@@ -4,33 +4,30 @@ import inxj.newsfeed.comment.entity.Comment;
 import inxj.newsfeed.comment.repository.CommentRepository;
 import inxj.newsfeed.comment.dto.RequestDto;
 import inxj.newsfeed.comment.dto.ResponseDto;
+import inxj.newsfeed.common.util.EntityFetcher;
 import inxj.newsfeed.exception.CustomException;
-import inxj.newsfeed.exception.ErrorCode;
 import inxj.newsfeed.post.entity.Post;
-import inxj.newsfeed.post.repository.PostRepository;
 import inxj.newsfeed.user.entity.User;
-import inxj.newsfeed.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static inxj.newsfeed.exception.ErrorCode.UNAUTHORIZED_USER_ID;
+
 @RequiredArgsConstructor
 @Service
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final PostRepository postRepository;
-    private final UserRepository userRepository;
+    private final EntityFetcher entityFetcher;
 
     //생성
     public void saveComment(Long id, Long postId, RequestDto requestDto) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER_ID));
+        User user = entityFetcher.getUserOrThrow(id);
 
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST_ID));
+        Post post = entityFetcher.getPostOrThrow(postId);
 
         Comment comment = new Comment(user, post, requestDto.getComment());
 
@@ -53,11 +50,10 @@ public class CommentService {
     @Transactional
     public void updateComment(Long userId, Long commentId, RequestDto requestDto) {
 
-        Comment comment = commentRepository.findWithUserAndPostUserById(commentId).
-                orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COMMENT_ID));
+        Comment comment = entityFetcher.getCommentOrThrow(commentId);
 
         if (!userId.equals(comment.getUser().getId())&&!userId.equals(comment.getPost().getUser().getId())) {
-            throw new CustomException(ErrorCode.UNAUTHORIZED_USER_ID);
+            throw new CustomException(UNAUTHORIZED_USER_ID);
         }
 
         comment.updateContent(requestDto.getComment());
@@ -65,10 +61,9 @@ public class CommentService {
 
     //삭제
     public void deleteComment(Long userId, Long commentId) {
-        Comment comment = commentRepository.findWithUserAndPostUserById(commentId).
-                orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COMMENT_ID));
+        Comment comment = entityFetcher.getCommentOrThrow(commentId);
         if (!userId.equals(comment.getUser().getId())&&!userId.equals(comment.getPost().getUser().getId())) {
-            throw new CustomException(ErrorCode.UNAUTHORIZED_USER_ID);
+            throw new CustomException(UNAUTHORIZED_USER_ID);
         }
         commentRepository.deleteById(commentId);
     }

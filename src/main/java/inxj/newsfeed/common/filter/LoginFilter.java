@@ -40,11 +40,10 @@ public class LoginFilter extends OncePerRequestFilter {
 
         HttpSession session = request.getSession(false); // 세션이 없으면 null
 
-        // TODO: 세션에 어떤 이름으로 로그인 유저 속성을 담는지 확인 필요
         if (session == null || session.getAttribute("loginUser") == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
             response.setContentType("application/json");
-
+            response.setCharacterEncoding("UTF-8");
             ResponseDto<Void> failResponse = ResponseDto.fail("로그인이 필요합니다.");
             String json = new ObjectMapper().writeValueAsString(failResponse); // Jackson 의 ObjectMapper 사용
             response.getWriter().write(json);

@@ -7,5 +7,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class FriendResponseDto {
-    private User friend;
+    private String username;
+    private String name;
+    private String profileImageUrl;
 }

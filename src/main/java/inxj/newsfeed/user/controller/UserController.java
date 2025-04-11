@@ -1,13 +1,11 @@
 package inxj.newsfeed.user.controller;
 
-import inxj.newsfeed.user.dto.request.DeactivateRequestDto;
-import inxj.newsfeed.user.dto.request.LoginRequestDto;
-import inxj.newsfeed.user.dto.request.SignUpRequestDto;
-import inxj.newsfeed.user.dto.request.UpdateProfileRequestDto;
+import inxj.newsfeed.user.dto.request.*;
 import inxj.newsfeed.user.dto.response.ChangePasswordResponseDto;
 import inxj.newsfeed.user.dto.response.ProfileResponseDto;
 import inxj.newsfeed.user.dto.response.SearchUsersResponseDto;
 import inxj.newsfeed.user.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +28,23 @@ public class UserController {
     }
 
     @PostMapping(value = "/login")
-    public ResponseEntity<Void> login(@RequestBody LoginRequestDto dto, HttpSession session) {
-        userService.login(dto, session);
+    public ResponseEntity<Void> login(@RequestBody LoginRequestDto dto, HttpServletRequest request) {
+
+        HttpSession session =request.getSession();
+
+        userService.login(dto,session);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @PostMapping(value = "/logout")
+    public ResponseEntity<Void> logout(@RequestBody LoginRequestDto dto, HttpServletRequest request) {
+
+        HttpSession session=request.getSession(false);
+
+        if(session!=null){
+            session.invalidate();
+        }
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -59,6 +72,13 @@ public class UserController {
         return new ResponseEntity<>(userService.changePassword(id), HttpStatus.OK);
     }
 
+    @PostMapping(value = "/users/{id}/modifyPassword")
+    public ResponseEntity<Void> modifyMyPassword(@PathVariable Long id, @RequestBody ModifyPasswordRequestDto requestDto) {
+
+        userService.modifyPassword(id,requestDto);
+
+        return new ResponseEntity<>( HttpStatus.OK);
+    }
     @PatchMapping(value = "/users/{id}/deactivate")
     public ResponseEntity<Void> deactivateUser(@PathVariable Long id, @RequestBody DeactivateRequestDto dto) {
         userService.deactivateUser(id, dto);

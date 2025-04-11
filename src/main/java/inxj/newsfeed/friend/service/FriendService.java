@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,11 +33,16 @@ public class FriendService {
         // User 가져오기
         User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
 
-        // user가 receiver or requester인 데이터 중에 status == Accept인 데이터 조회
-        List<User> foundFriends = friendRepository.findByUserAndStatus(user, ACCEPT);
-
-        return foundFriends.stream()
-                .map(FriendResponseDto::new)
+        // user가 receiver or requester인 데이터 중에 status == Accept인 상대 조회 (친구 조회)
+        return friendRepository.findByUserAndStatus(user, ACCEPT).stream()
+                // FriendRequest -> User
+                .map(friendRequest ->
+                        friendRequest.getReceiver().equals(user) ? friendRequest.getRequester() : friendRequest.getReceiver())
+                // User -> Dto
+                .map(friend -> new FriendResponseDto(
+                        friend.getUsername(),
+                        friend.getName(),
+                        friend.getProfileImageUrl()))
                 .toList();
     }
 
@@ -153,7 +159,10 @@ public class FriendService {
         List<FriendRequest> foundRequests = friendRepository.findByRequester(user);
 
         return foundRequests.stream()
-                .map(FriendRequestResponseDto::new)
+                .map(foundRequest -> new FriendRequestResponseDto(
+                        foundRequest.getReceiver().getUsername(),
+                        foundRequest.getReceiver().getName(),
+                        foundRequest.getReceiver().getProfileImageUrl()))
                 .toList();
     }
 
@@ -170,7 +179,10 @@ public class FriendService {
         List<FriendRequest> foundRequests = friendRepository.findByReceiver(user);
 
         return foundRequests.stream()
-                .map(FriendRequestResponseDto::new)
+                .map(foundRequest -> new FriendRequestResponseDto(
+                        foundRequest.getRequester().getUsername(),
+                        foundRequest.getRequester().getName(),
+                        foundRequest.getRequester().getProfileImageUrl()))
                 .toList();
     }
 }

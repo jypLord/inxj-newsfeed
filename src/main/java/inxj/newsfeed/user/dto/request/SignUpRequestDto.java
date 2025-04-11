@@ -8,12 +8,13 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Valid
 @Getter
 @AllArgsConstructor
 public class SignUpRequestDto {
+
     @Email
     private final String email;
 
@@ -27,7 +28,7 @@ public class SignUpRequestDto {
     private final String name;
 
     @Past(message = "생일은 과거 날짜여야 합니다.")
-    private final LocalDateTime birthday;
+    private final LocalDate birthday;
 
     private final String gender;
 
