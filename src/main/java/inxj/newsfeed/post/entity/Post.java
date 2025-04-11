@@ -15,6 +15,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -42,7 +44,12 @@ public class Post extends BaseEntity {
   @Column(nullable = false)
   private String content;   // 내용
 
-  @OneToMany(fetch = FetchType.LAZY)
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(
+      name = "post_category",
+      joinColumns = @JoinColumn(name="category_id"),
+      inverseJoinColumns = @JoinColumn(name="post_id")
+  )
   private List<Category> categoryIds;  // 카테고리
 
   @Convert(converter = StringListConverter.class)
