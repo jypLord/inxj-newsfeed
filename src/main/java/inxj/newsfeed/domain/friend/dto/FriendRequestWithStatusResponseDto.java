@@ -1,6 +1,6 @@
-package inxj.newsfeed.domain.friend.dto;
+package inxj.newsfeed.friend.dto;
 
-import inxj.newsfeed.domain.friend.entity.Status;
+import inxj.newsfeed.friend.entity.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
