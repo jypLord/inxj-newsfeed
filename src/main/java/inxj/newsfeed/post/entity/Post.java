@@ -41,7 +41,7 @@ public class Post extends BaseEntity {
   @OnDelete(action = OnDeleteAction.CASCADE)
   private User user; // 사용자와 N:1 연관관계 (사용자 id 맵핑)
 
-  @Column(nullable = false)
+  @Column(columnDefinition = "LONGTEXT", nullable = false)
   private String content;   // 내용
 
   @ManyToMany(fetch = FetchType.LAZY)
