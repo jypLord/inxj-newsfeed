@@ -33,13 +33,13 @@ public class PostService {
 
     // 게시글 작성
     public void save(PostCreateRequestDto requestDTO, Long userId) {
-      User user = userRepository.findById(userId)
-          .orElseThrow(() -> new CustomException(NOT_FOUND_USER_ID)); // 사용자 찾기
-      List<Category> categoryList = categoryService.getCategoryByType(requestDTO.getCategoryTypes()); // CategoryType --> Category 변환
-      postRepository.save(new Post(requestDTO, user, categoryList));
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new CustomException(NOT_FOUND_USER_ID)); // 사용자 찾기
+        List<Category> categoryList = categoryService.getCategoryByTypeString(requestDTO.getCategoryTypes()); // CategoryType --> Category 변환
+        postRepository.save(new Post(requestDTO, user, categoryList));
     }
 
-    // 게시글 단건 조회    // TODO: 친구 목록 불러오는 로직 다시 확인필요
+    // 게시글 단건 조회
     public PostResponseDto find(Long postId, Long userId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(
             NOT_FOUND_POST_ID));
@@ -48,9 +48,9 @@ public class PostService {
         if (post.getVisibility() == Visibility.FRIENDS && !(post.getUser().getId().equals(userId))) {
             User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
             List<User> friendList = friendRepository.findByUserAndStatus(user, ACCEPT).stream()
-                    .map(friendRequest ->
-                            friendRequest.getReceiver().equals(user) ? friendRequest.getRequester() : friendRequest.getReceiver())
-                    .toList();
+                .map(friendRequest ->
+                    friendRequest.getReceiver().equals(user) ? friendRequest.getRequester() : friendRequest.getReceiver())
+                .toList();
 
             // 게시글 작성자와 친구가 아니라면
             if (!friendList.contains(user)) {
@@ -65,7 +65,7 @@ public class PostService {
         // 전체 공개 게시글에 대하여 작성일자 내림차순 조회
         List<Post> postList = postRepository.findAllByVisibility(Visibility.PUBLIC);
         return postList.stream()
-                .map(PostResponseDto::new).toList();
+            .map(PostResponseDto::new).toList();
     }
 
     // 모든 친구 공개 게시글 조회
@@ -75,21 +75,21 @@ public class PostService {
 
         // 친구 목록 조회
         List<User> friendList = friendRepository.findByUserAndStatus(user, ACCEPT).stream()
-                .map(friendRequest ->
-                        friendRequest.getReceiver().equals(user) ? friendRequest.getRequester() : friendRequest.getReceiver())
-                .toList();
+            .map(friendRequest ->
+                friendRequest.getReceiver().equals(user) ? friendRequest.getRequester() : friendRequest.getReceiver())
+            .toList();
 
         // 친구인 사용자들의 모든 친구 공개 게시글 조회
         List<Post> postList = postRepository.findAllFriendVisible(Visibility.FRIENDS, friendList);
         return postList.stream()
-                .map(PostResponseDto::new).toList();
+            .map(PostResponseDto::new).toList();
     }
 
     // 사용자의 모든 게시글 조회
     public List<PostResponseDto> findAllUserPosts(Long targetUserId, Long loginId) {
         List<Post> postList;
         User targetUser = userRepository.findById(targetUserId)
-                .orElseThrow(() -> new CustomException(INVALID_USER_ID));
+            .orElseThrow(() -> new CustomException(INVALID_USER_ID));
 
         // 자신의 모든 게시글을 조회
         if (targetUserId.equals(loginId)) {
@@ -99,9 +99,9 @@ public class PostService {
         else {
             User user = userRepository.findById(loginId).orElseThrow(() -> new CustomException(INVALID_USER_ID));
             List<User> friendList = friendRepository.findByUserAndStatus(user, ACCEPT).stream()
-                    .map(friendRequest ->
-                            friendRequest.getReceiver().equals(user) ? friendRequest.getRequester() : friendRequest.getReceiver())
-                    .toList();
+                .map(friendRequest ->
+                    friendRequest.getReceiver().equals(user) ? friendRequest.getRequester() : friendRequest.getReceiver())
+                .toList();
 
             // 친구라면 전체 공개와 친구 공개 게시글 조회
             if (friendList.contains(user)) {
@@ -114,21 +114,21 @@ public class PostService {
         }
 
         return postList.stream()
-                .map(PostResponseDto::new).toList();
+            .map(PostResponseDto::new).toList();
     }
 
     // 모든 전체 공개 게시글을 카테고리 별로 조회
-    public List<PostResponseDto> findAllPublicPostsByCategories(List<CategoryType> categoryTypeList) {
+    public List<PostResponseDto> findAllPublicPostsByCategories(List<String> categoryTypeList) {
         // enum 검증은 컨트롤러 레이어에서
 
         // CategoryType 중복값은 JPA IN 쿼리에서 자동으로 무시
-        List<Category> categoryList = categoryService.getCategoryByType(categoryTypeList); // CategoryType --> Category 변환
+        List<Category> categoryList = categoryService.getCategoryByTypeString(categoryTypeList); // CategoryType --> Category 변환
 
         // 모든 전체 공개 게시글을 카테고리 별로 조회
         List<Post> postList = postRepository.findAllByCategoryAndVisibility(Visibility.PUBLIC, categoryList);
 
         return postList.stream()
-                .map(PostResponseDto::new).toList();
+            .map(PostResponseDto::new).toList();
     }
 
     // 게시글 수정
@@ -140,7 +140,7 @@ public class PostService {
 
         // 수정 대상 게시글 작성자가 현재 로그인한 사용자와 동일하다면
         if (loginId.equals(targetUser.getId())) {
-            List<Category> categoryList = categoryService.getCategoryByType(requestDTO.getCategoryTypes()); // CategoryType --> Category 변환
+            List<Category> categoryList = categoryService.getCategoryByTypeString(requestDTO.getCategoryTypes()); // CategoryType --> Category 변환
             targetPost.update(requestDTO, categoryList);    // 업데이트
         }
         // 일치하지 않는 경우

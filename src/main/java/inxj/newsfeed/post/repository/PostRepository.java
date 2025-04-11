@@ -29,8 +29,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findAllByUser(@Param("user") User user);
 
     // 공개 범위와 카테고리 별로 조회
-    @Query("SELECT p FROM Post p WHERE p.visibility = :visibility AND p.categoryIds IN :categories ORDER BY p.createdAt DESC")
+    @Query("SELECT p FROM Post p JOIN p.categoryIds c WHERE p.visibility = :visibility AND c IN :categoryList ORDER BY p.createdAt DESC")
     List<Post> findAllByCategoryAndVisibility(
-        @Param("visibility") Visibility visibility, @Param("categories")List<Category> categoryList);
+        @Param("visibility") Visibility visibility, @Param("categoryList")List<Category> categoryList);
 
 }

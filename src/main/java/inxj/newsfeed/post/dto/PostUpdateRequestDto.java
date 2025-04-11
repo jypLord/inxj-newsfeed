@@ -11,13 +11,12 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class PostUpdateRequestDto {
-  // TODO: List<Category> 검증 로직 추가
   @Size(min=0, max=1000, message = "게시글은 1000글자 이내여야 합니다.")
-  private final java.lang.String content;
+  private final String content;
 
-  private final List<java.lang.String> imgUrls;
+  private final List<String> imgUrls;
 
-  private final List<CategoryType> categoryTypes;
+  private final List<String> categoryTypes;
 
   @ValidEnum(target = Visibility.class)
   private final String visibility;
