@@ -16,7 +16,8 @@ public interface FriendRepository extends JpaRepository<FriendRequest, Long> {
     @Query("select f from FriendRequest f where (f.requester = :user or f.receiver = :user) and f.status = :status")
     List<FriendRequest> findByUserAndStatus(User user, Status status);
 
-    @Query("select f from FriendRequest f where (f.receiver = :user1 and f.requester = :user2) or (f.receiver = :user2 and f.requester = :user1)")
+    @Query("select f from FriendRequest f where (f.receiver = :user1 and f.requester = :user2) " +
+            "or (f.receiver = :user2 and f.requester = :user1)")
     Optional<FriendRequest> findInteractiveRequest(@Param("user1") User user1, @Param("user2")User user2);
 
     Optional<FriendRequest> findByReceiverAndRequester(User receiver, User requester);

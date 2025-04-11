@@ -4,6 +4,8 @@ import inxj.newsfeed.comment.entity.Comment;
 import inxj.newsfeed.comment.repository.CommentRepository;
 import inxj.newsfeed.exception.CustomException;
 import inxj.newsfeed.exception.ErrorCode;
+import inxj.newsfeed.friend.entity.FriendRequest;
+import inxj.newsfeed.friend.repository.FriendRepository;
 import inxj.newsfeed.like.entity.CommentLike;
 import inxj.newsfeed.like.entity.CommentLikeId;
 import inxj.newsfeed.like.entity.PostLike;
@@ -15,8 +17,9 @@ import inxj.newsfeed.post.repository.PostRepository;
 import inxj.newsfeed.user.entity.User;
 import inxj.newsfeed.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.sql.results.graph.entity.EntityFetch;
 import org.springframework.stereotype.Component;
+
+import static inxj.newsfeed.exception.ErrorCode.INVALID_FRIEND_REQUEST;
 
 @Component
 @RequiredArgsConstructor // 생성자가 한 개인 경우 자동으로 @Autowired 가 붙음
@@ -27,6 +30,7 @@ public class EntityFetcher {
     private final PostLikeRepository postLikeRepository;
     private final CommentRepository commentRepository;
     private final CommentLikeRepository commentLikeRepository;
+    private final FriendRepository friendRepository;
 
     public User getUserOrThrow(Long userId) {
 
@@ -52,6 +56,16 @@ public class EntityFetcher {
     public CommentLike getCommentLikeOrThrow(CommentLikeId commentLikeId) {
         return commentLikeRepository.findById(commentLikeId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_LIKE_ID));
+    }
+
+    public FriendRequest getInteractiveFriendRequestOrThrow(User user1, User user2){
+        return friendRepository.findInteractiveRequest(user1, user2)
+                .orElseThrow(() -> new CustomException(INVALID_FRIEND_REQUEST));
+    }
+
+    public FriendRequest getFriendRequestOrThrow(User user1, User user2){
+        return friendRepository.findByReceiverAndRequester(user1, user2)
+                .orElseThrow(() -> new CustomException(INVALID_FRIEND_REQUEST));
     }
 
 }
