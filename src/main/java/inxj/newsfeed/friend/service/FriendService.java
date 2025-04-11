@@ -3,6 +3,7 @@ package inxj.newsfeed.friend.service;
 import inxj.newsfeed.common.util.EntityFetcher;
 import inxj.newsfeed.exception.CustomException;
 import inxj.newsfeed.friend.dto.FriendRequestResponseDto;
+import inxj.newsfeed.friend.dto.FriendRequestWithStatusResponseDto;
 import inxj.newsfeed.friend.dto.FriendResponseDto;
 import inxj.newsfeed.friend.entity.FriendRequest;
 import inxj.newsfeed.friend.repository.FriendRepository;
@@ -50,11 +51,11 @@ public class FriendService {
     3. Status 변경
      */
     @Transactional
-    public void deleteFriend(Long loginUserId, Long friendId) {
+    public void deleteFriend(Long loginUserId, Long targetId) {
         User loginUser = entityFetcher.getUserOrThrow(loginUserId);
-        User friend = entityFetcher.getUserOrThrow(friendId);
+        User targetUser = entityFetcher.getUserOrThrow(targetId);
 
-        FriendRequest foundFriendRequest = entityFetcher.getInteractiveFriendRequestOrThrow(loginUser, friend);
+        FriendRequest foundFriendRequest = entityFetcher.getInteractiveFriendRequestOrThrow(loginUser, targetUser);
 
         if (foundFriendRequest.getStatus() == ACCEPT) {
             foundFriendRequest.setStatus(DELETED);
@@ -66,18 +67,27 @@ public class FriendService {
     /*
     친구 요청 API
     1. 전달받은 id값을 가지는 사용자 조회(사용자 존재 여부 확인)
+    2-0. loginUser == targetUser 예외처리
     2-1. friendRequest 테이블에 데이터가 삽입된 적이 없으면 insert
-    2-2. friendRequest 테이블에 이미 저장되어있으면, Status가 DELETE or REJECT인 경우에만 PENDING으로 변경
+    2-2. 상대방이 이미 나한테 친구 요청을 보낸 상태면 Status를 ACCEPT로 변경
+    2-3. friendRequest 테이블에 이미 저장되어있으면, Status가 DELETE or REJECT인 경우에만 PENDING으로 변경
      */
     @Transactional
-    public void requestFriend(Long loginUserId, Long userId) {
-        User requester = entityFetcher.getUserOrThrow(loginUserId);
-        User receiver = entityFetcher.getUserOrThrow(userId);
+    public void requestFriend(Long loginUserId, Long targetId) {
+        User loginUser = entityFetcher.getUserOrThrow(loginUserId);
+        User targetUser = entityFetcher.getUserOrThrow(targetId);
 
-        Optional<FriendRequest> foundFriendRequest = friendRepository.findInteractiveRequest(requester, receiver);
+        if(loginUser.equals(targetUser)){
+            throw new CustomException(INVALID_FRIEND_REQUEST);
+        }
+
+        Optional<FriendRequest> foundFriendRequest = friendRepository.findInteractiveRequest(loginUser, targetUser);
 
         if (foundFriendRequest.isEmpty()) {
-            friendRepository.save(new FriendRequest(requester, receiver));
+            friendRepository.save(new FriendRequest(loginUser, targetUser));
+        }
+        else if(foundFriendRequest.get().getRequester().equals(targetUser) && foundFriendRequest.get().getStatus() == PENDING){
+            foundFriendRequest.get().setStatus(ACCEPT);
         }
         else if (foundFriendRequest.get().getStatus() == REJECT
                 || foundFriendRequest.get().getStatus() == DELETED) {
@@ -94,9 +104,9 @@ public class FriendService {
     3. Status 변경
      */
     @Transactional
-    public void acceptRequest(Long loginUserId, Long userId) {
+    public void acceptRequest(Long loginUserId, Long targetId) {
         User receiver = entityFetcher.getUserOrThrow(loginUserId);
-        User requester = entityFetcher.getUserOrThrow(userId);
+        User requester = entityFetcher.getUserOrThrow(targetId);
 
         FriendRequest foundFriendRequest = entityFetcher.getFriendRequestOrThrow(receiver, requester);
 
@@ -114,9 +124,9 @@ public class FriendService {
      3. Status 변경
       */
     @Transactional
-    public void rejectRequest(Long loginUserId, Long userId) {
+    public void rejectRequest(Long loginUserId, Long targetId) {
         User receiver = entityFetcher.getUserOrThrow(loginUserId);
-        User requester = entityFetcher.getUserOrThrow(userId);
+        User requester = entityFetcher.getUserOrThrow(targetId);
 
         FriendRequest foundFriendRequest = entityFetcher.getFriendRequestOrThrow(receiver, requester);
 
@@ -130,30 +140,31 @@ public class FriendService {
     /*
     보낸 친구 요청 목록 조회 API
     1. 전달받은 id값을 가지는 사용자 조회(사용자 존재 여부 확인)
-    2. FriendRequest 테이블에서 데이터 조회
+    2. FriendRequest 테이블에서 Status가 PENDING or REJECT인 데이터 조회
      */
-    public List<FriendRequestResponseDto> findSentRequests(Long userId) {
+    public List<FriendRequestWithStatusResponseDto> findSentRequests(Long userId) {
         User user = entityFetcher.getUserOrThrow(userId);
 
-        List<FriendRequest> foundRequests = friendRepository.findByRequester(user);
+        List<FriendRequest> foundRequests = friendRepository.findByRequesterAndStatusIn(user, List.of(PENDING, REJECT));
 
         return foundRequests.stream()
-                .map(foundRequest -> new FriendRequestResponseDto(
+                .map(foundRequest -> new FriendRequestWithStatusResponseDto(
                         foundRequest.getReceiver().getUsername(),
                         foundRequest.getReceiver().getName(),
-                        foundRequest.getReceiver().getProfileImageUrl()))
+                        foundRequest.getReceiver().getProfileImageUrl(),
+                        foundRequest.getStatus()))
                 .toList();
     }
 
     /*
     받은 친구 요청 목록 조회 API
     1. 전달받은 id값을 가지는 사용자 조회(사용자 존재 여부 확인)
-    2. FriendRequest 테이블에서 데이터 조회
+    2. FriendRequest 테이블에서 Status가 PENDING인 데이터 조회
      */
     public List<FriendRequestResponseDto> findReceivedRequests(Long userId) {
         User user = entityFetcher.getUserOrThrow(userId);
 
-        List<FriendRequest> foundRequests = friendRepository.findByReceiver(user);
+        List<FriendRequest> foundRequests = friendRepository.findByReceiverAndStatus(user, PENDING);
 
         return foundRequests.stream()
                 .map(foundRequest -> new FriendRequestResponseDto(
