@@ -71,7 +71,7 @@ public class UserService {
     }
 
     public ProfileResponseDto viewProfile(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.INVALID_USER_ID));
+        User user = userRepository.findByIdAndDeletedAt(id, null).orElseThrow(() -> new CustomException(ErrorCode.INVALID_USER_ID));
 
         return ProfileResponseDto.builder()
                 .profileImageUrl(user.getProfileImageUrl())
@@ -120,7 +120,7 @@ public class UserService {
     }
 
     public List<SearchUsersResponseDto> searchUsers(String username) {
-        List<User> users = userRepository.findByUsername(username);
+        List<User> users = userRepository.findByUsernameAndDeletedAt(username, null);
 
         List<SearchUsersResponseDto> responseDTOList = new ArrayList<>();
 

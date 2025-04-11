@@ -53,7 +53,7 @@ public class UserController {
         return ResponseEntity.ok(userService.viewProfile(id));
     }
 
-    @PutMapping(value = "/users/{id}")
+    @PatchMapping(value = "/users/{id}")
     public ResponseEntity<Void> modifyProfile(@PathVariable Long id, @RequestBody @Valid UpdateProfileRequestDto dto) {
         userService.modifyProfile(id, dto);
         return new ResponseEntity<>(HttpStatus.OK);
