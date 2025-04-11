@@ -59,11 +59,13 @@ public class EntityFetcher {
     }
 
     public FriendRequest getInteractiveFriendRequestOrThrow(User user1, User user2){
-        return friendRepository.findInteractiveRequest(user1, user2).orElseThrow(() -> new CustomException(INVALID_FRIEND_REQUEST));
+        return friendRepository.findInteractiveRequest(user1, user2)
+                .orElseThrow(() -> new CustomException(INVALID_FRIEND_REQUEST));
     }
 
     public FriendRequest getFriendRequestOrThrow(User user1, User user2){
-        return friendRepository.findByReceiverAndRequester(user1, user2).orElseThrow(() -> new CustomException(INVALID_FRIEND_REQUEST));
+        return friendRepository.findByReceiverAndRequester(user1, user2)
+                .orElseThrow(() -> new CustomException(INVALID_FRIEND_REQUEST));
     }
 
 }
