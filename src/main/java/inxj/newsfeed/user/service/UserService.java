@@ -1,7 +1,9 @@
 package inxj.newsfeed.user.service;
 
+import static inxj.newsfeed.exception.ErrorCode.*;
+
+import inxj.newsfeed.common.util.EntityFetcher;
 import inxj.newsfeed.exception.CustomException;
-import inxj.newsfeed.exception.ErrorCode;
 import inxj.newsfeed.user.dto.request.*;
 import inxj.newsfeed.user.dto.response.ChangePasswordResponseDto;
 import inxj.newsfeed.user.dto.response.ProfileResponseDto;
@@ -21,21 +23,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private final EntityFetcher entityFetcher;
 
     public void signUp(SignUpRequestDto dto) {
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new CustomException(ErrorCode.CONFLICT_EMAIL);
+            throw new CustomException(CONFLICT_EMAIL);
         }
 
         //TODO: CONFLICT_USERNAME 추가 요청후 변경
         if (!userRepository.findByUsername(dto.getUsername()).isEmpty()) {
-            throw new CustomException(ErrorCode.CONFLICT_STATUS);
+            throw new CustomException(CONFLICT_STATUS);
         }
 
         //비밀번호 인코딩
@@ -58,20 +61,20 @@ public class UserService {
     public void login(LoginRequestDto dto, HttpSession session) {
 
         User user = userRepository.findByEmail(dto.getEmail())
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_EMAIL));
+                .orElseThrow(() -> new CustomException(INVALID_EMAIL));
 
         if (!isPasswordValid(dto.getPassword(), user.getPassword())) {
-            throw new CustomException(ErrorCode.INVALID_PASSWORD);
+            throw new CustomException(INVALID_PASSWORD);
         }
         if (user.getDeletedAt()==null) {
             session.setAttribute("loginUser", user.getId());
         } else {
-            throw new CustomException(ErrorCode.INVALID_USER_ID);
+            throw new CustomException(INVALID_USER_ID);
         }
     }
 
     public ProfileResponseDto viewProfile(Long id) {
-        User user = userRepository.findByIdAndDeletedAt(id, null).orElseThrow(() -> new CustomException(ErrorCode.INVALID_USER_ID));
+        User user = userRepository.findByIdAndDeletedAt(id, null).orElseThrow(() -> new CustomException(INVALID_USER_ID));
 
         return ProfileResponseDto.builder()
                 .profileImageUrl(user.getProfileImageUrl())
@@ -82,10 +85,10 @@ public class UserService {
 
     @Transactional
     public void modifyProfile(Long id, UpdateProfileRequestDto dto) {
-        User user = userRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.INVALID_USER_ID));
+        User user = entityFetcher.getUserOrThrow(id);
 
         if (!isPasswordValid(dto.getPassword(), user.getPassword())) {
-            throw new CustomException(ErrorCode.INVALID_PASSWORD);
+            throw new CustomException(INVALID_PASSWORD);
         }
 
         user.setBirthday(dto.getBirthday());
@@ -96,7 +99,7 @@ public class UserService {
             Optional<User> existNumber = userRepository.findByPhoneNumber(dto.getPhoneNumber());
 
             if (existNumber.isPresent()) {
-                throw new CustomException(ErrorCode.CONFLICT_STATUS);
+                throw new CustomException(CONFLICT_STATUS);
             }
 
             user.setPhoneNumber(dto.getPhoneNumber());
@@ -108,11 +111,11 @@ public class UserService {
 
     @Transactional
     public void modifyPassword(Long id, ModifyPasswordRequestDto requestDto){
-
-        User user = userRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.INVALID_USER_ID));
+                    
+        User user = entityFetcher.getUserOrThrow(id);
 
         if (!isPasswordValid(requestDto.getOldPassword(),user.getPassword())){
-            throw new CustomException(ErrorCode.INVALID_PASSWORD);
+            throw new CustomException(INVALID_PASSWORD);
         }
 
         user.setPassword(passwordEncoder.encode(requestDto.getNewPassword()));
@@ -133,7 +136,7 @@ public class UserService {
     }
 
     public ChangePasswordResponseDto changePassword(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.INVALID_USER_ID));
+        entityFetcher.getUserOrThrow(id);
 
         String password="12345678910";
 
@@ -142,10 +145,10 @@ public class UserService {
 
     @Transactional
     public void deactivateUser(Long id, DeactivateRequestDto dto) {
-        User user = userRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.INVALID_USER_ID));
+        User user = entityFetcher.getUserOrThrow(id);
 
         if (!isPasswordValid(dto.getPassword(), user.getPassword())) {
-            throw new CustomException(ErrorCode.INVALID_PASSWORD);
+            throw new CustomException(INVALID_PASSWORD);
         }
 
         user.setDeletedAt(LocalDateTime.now());
