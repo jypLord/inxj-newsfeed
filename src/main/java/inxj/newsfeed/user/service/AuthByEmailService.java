@@ -1,0 +1,137 @@
+package inxj.newsfeed.user.service;
+
+import inxj.newsfeed.common.config.SecurityConfig;
+import inxj.newsfeed.exception.CustomException;
+import inxj.newsfeed.exception.ErrorCode;
+import inxj.newsfeed.user.dto.request.AuthByEmailRequestDto;
+import inxj.newsfeed.user.dto.request.CheckingByEmailRequestDto;
+import inxj.newsfeed.user.entity.User;
+import inxj.newsfeed.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.mail.MailException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+import static inxj.newsfeed.exception.ErrorCode.INVALID_CODE;
+
+@Service
+@RequiredArgsConstructor
+public class AuthByEmailService {
+    private final JavaMailSender javaMailSender;
+    private final UserRepository userRepository;
+    private final RedisTemplate<String,String> redisTemplate;
+    private final SecurityConfig securityConfig;
+
+    public void sendEmail(AuthByEmailRequestDto dto){
+        String email=dto.getEmail();
+
+        String code = createCode();
+
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+
+        redisTemplate.opsForValue().set(email,code,5, TimeUnit.MINUTES);
+
+        try{
+            simpleMailMessage.setTo(email);
+            simpleMailMessage.setSubject("InXj 이메일 인증 번호 입니다.");
+            simpleMailMessage.setText("인증코드: "+code);
+            javaMailSender.send(simpleMailMessage);
+        } catch (MailException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
+    public String existEmail(AuthByEmailRequestDto dto){
+        if (userRepository.existsByEmail(dto.getEmail())){
+            return "회원가입된 이메일 입니다.";
+        }else {
+            return "회원가입 가능한 이메일 입니다.";
+        }
+    }
+
+
+
+
+    @Transactional
+    public void findPassword(CheckingByEmailRequestDto dto){
+
+        String email=dto.getEmail();
+        String code= dto.getCode();
+
+        String savedCode = redisTemplate.opsForValue().get(email);
+
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+
+        String newPassword=createPassword();
+        if (code.equals(savedCode)){
+            simpleMailMessage.setTo(email);
+            simpleMailMessage.setSubject("새로운 비밀번호 입니다");
+            simpleMailMessage.setText("비밀번호:" + newPassword+"\n 최대한 빠르게 변경 해주세요");
+            User user=userRepository.findByEmail(email).
+                    orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_EMAIL));
+            user.setPassword(securityConfig.passwordEncoder().encode(newPassword));
+            javaMailSender.send(simpleMailMessage);
+
+        }else{
+            throw new CustomException(INVALID_CODE);
+        }
+    }
+
+
+    public void CheckEmailAuth(CheckingByEmailRequestDto dto){
+        String email=dto.getEmail();
+        String code= dto.getCode();
+
+        String savedCode = redisTemplate.opsForValue().get(email);
+        System.out.println("savedCode = " + savedCode);
+        System.out.println("code = " + code);
+        
+        
+        if (code.equals(savedCode)) {
+            redisTemplate.opsForValue().set(email + ":verified", "true", 10, TimeUnit.MINUTES);
+        }
+        else {
+            throw new CustomException(INVALID_CODE);
+        }
+    }
+
+    private String createCode() {
+        int length = 6;
+        try {
+            Random random = SecureRandom.getInstanceStrong();
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < length; i++) {
+                builder.append(random.nextInt(10));
+            }
+            return builder.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private String createPassword(){
+        int length=10;
+        String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+        try {
+            Random random =SecureRandom.getInstanceStrong();
+            StringBuilder builder=new StringBuilder();
+            for (int i=0;i<length;i++){
+                builder.append(characters.charAt(random.nextInt(characters.length()+1)));
+            }
+            return builder.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+}
+

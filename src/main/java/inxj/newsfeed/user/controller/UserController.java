@@ -17,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+//@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
@@ -25,27 +26,6 @@ public class UserController {
     public ResponseEntity<Void> signUp(@RequestBody @Valid SignUpRequestDto dto) {
         userService.signUp(dto);
         return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-    @PostMapping(value = "/login")
-    public ResponseEntity<Void> login(@RequestBody LoginRequestDto dto, HttpServletRequest request) {
-
-        HttpSession session =request.getSession();
-
-        userService.login(dto,session);
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-    @PostMapping(value = "/logout")
-    public ResponseEntity<Void> logout(@RequestBody LoginRequestDto dto, HttpServletRequest request) {
-
-        HttpSession session=request.getSession(false);
-
-        if(session!=null){
-            session.invalidate();
-        }
-
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(value = "/users/{id}")
@@ -68,11 +48,6 @@ public class UserController {
     }
 
     @PostMapping(value = "/users/{id}/password")
-    public ResponseEntity<ChangePasswordResponseDto> iLostMyPassword(@PathVariable Long id) {
-        return new ResponseEntity<>(userService.changePassword(id), HttpStatus.OK);
-    }
-
-    @PostMapping(value = "/users/{id}/modifyPassword")
     public ResponseEntity<Void> modifyMyPassword(@PathVariable Long id, @RequestBody ModifyPasswordRequestDto requestDto) {
 
         userService.modifyPassword(id,requestDto);
