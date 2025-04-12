@@ -1,9 +1,9 @@
-package inxj.newsfeed.friend.controller;
+package inxj.newsfeed.domain.friend.controller;
 
-import inxj.newsfeed.friend.dto.FriendRequestResponseDto;
-import inxj.newsfeed.friend.dto.FriendRequestWithStatusResponseDto;
-import inxj.newsfeed.friend.dto.FriendResponseDto;
-import inxj.newsfeed.friend.service.FriendService;
+import inxj.newsfeed.domain.friend.dto.FriendRequestResponseDto;
+import inxj.newsfeed.domain.friend.dto.FriendRequestWithStatusResponseDto;
+import inxj.newsfeed.domain.friend.dto.FriendResponseDto;
+import inxj.newsfeed.domain.friend.service.FriendService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

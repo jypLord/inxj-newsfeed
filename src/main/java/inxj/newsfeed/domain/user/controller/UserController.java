@@ -1,13 +1,12 @@
 package inxj.newsfeed.domain.user.controller;
 
-import inxj.newsfeed.domain.user.dto.request.DeactivateRequestDto;
-import inxj.newsfeed.domain.user.dto.request.ModifyPasswordRequestDto;
-import inxj.newsfeed.domain.user.dto.request.SignUpRequestDto;
-import inxj.newsfeed.domain.user.dto.request.UpdateProfileRequestDto;
-import inxj.newsfeed.user.dto.request.*;
+import inxj.newsfeed.domain.user.dto.request.*;
+import inxj.newsfeed.domain.user.dto.response.ChangePasswordResponseDto;
 import inxj.newsfeed.domain.user.dto.response.ProfileResponseDto;
 import inxj.newsfeed.domain.user.dto.response.SearchUsersResponseDto;
 import inxj.newsfeed.domain.user.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

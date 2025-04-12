@@ -1,13 +1,13 @@
-package inxj.newsfeed.friend.service;
+package inxj.newsfeed.domain.friend.service;
 
 import inxj.newsfeed.common.util.EntityFetcher;
 import inxj.newsfeed.exception.CustomException;
-import inxj.newsfeed.friend.dto.FriendRequestResponseDto;
-import inxj.newsfeed.friend.dto.FriendRequestWithStatusResponseDto;
-import inxj.newsfeed.friend.dto.FriendResponseDto;
-import inxj.newsfeed.friend.entity.FriendRequest;
-import inxj.newsfeed.friend.repository.FriendRepository;
-import inxj.newsfeed.user.entity.User;
+import inxj.newsfeed.domain.friend.dto.FriendRequestResponseDto;
+import inxj.newsfeed.domain.friend.dto.FriendRequestWithStatusResponseDto;
+import inxj.newsfeed.domain.friend.dto.FriendResponseDto;
+import inxj.newsfeed.domain.friend.entity.FriendRequest;
+import inxj.newsfeed.domain.friend.repository.FriendRepository;
+import inxj.newsfeed.domain.user.entity.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static inxj.newsfeed.exception.ErrorCode.*;
-import static inxj.newsfeed.friend.entity.Status.*;
+import static inxj.newsfeed.domain.friend.entity.Status.*;
 
 @Service
 @RequiredArgsConstructor

@@ -1,5 +1,0 @@
-package inxj.newsfeed.common.filter;
-
-public interface Const {
-    String LOGIN_USER="loginUser";
-}
