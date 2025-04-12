@@ -13,7 +13,7 @@ public class WebConfig {
         FilterRegistrationBean<LoginFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new LoginFilter());
         registrationBean.addUrlPatterns("/*");
-        registrationBean.setOrder(0);
+        registrationBean.setOrder(1);
         return registrationBean;
     }
 

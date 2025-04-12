@@ -3,8 +3,8 @@ package inxj.newsfeed.common.annotation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.Valid;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
