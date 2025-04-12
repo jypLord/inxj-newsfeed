@@ -5,7 +5,7 @@ import inxj.newsfeed.domain.comment.repository.CommentRepository;
 import inxj.newsfeed.domain.comment.dto.RequestDto;
 import inxj.newsfeed.domain.comment.dto.ResponseDto;
 import inxj.newsfeed.common.util.EntityFetcher;
-import inxj.newsfeed.exception.CustomException;
+import inxj.newsfeed.exception.BaseException;
 import inxj.newsfeed.domain.post.entity.Post;
 import inxj.newsfeed.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +53,7 @@ public class CommentService {
         Comment comment = entityFetcher.getCommentOrThrow(commentId);
 
         if (!userId.equals(comment.getUser().getId())&&!userId.equals(comment.getPost().getUser().getId())) {
-            throw new CustomException(UNAUTHORIZED_USER_ID);
+            throw new BaseException(UNAUTHORIZED_USER_ID);
         }
 
         comment.updateContent(requestDto.getComment());
@@ -63,7 +63,7 @@ public class CommentService {
     public void deleteComment(Long userId, Long commentId) {
         Comment comment = entityFetcher.getCommentOrThrow(commentId);
         if (!userId.equals(comment.getUser().getId())&&!userId.equals(comment.getPost().getUser().getId())) {
-            throw new CustomException(UNAUTHORIZED_USER_ID);
+            throw new BaseException(UNAUTHORIZED_USER_ID);
         }
         commentRepository.deleteById(commentId);
     }

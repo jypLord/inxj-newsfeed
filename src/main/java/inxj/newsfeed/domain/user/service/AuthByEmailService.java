@@ -1,7 +1,7 @@
 package inxj.newsfeed.domain.user.service;
 
 import inxj.newsfeed.common.config.SecurityConfig;
-import inxj.newsfeed.exception.CustomException;
+import inxj.newsfeed.exception.BaseException;
 import inxj.newsfeed.exception.ErrorCode;
 import inxj.newsfeed.domain.user.dto.request.AuthByEmailRequestDto;
 import inxj.newsfeed.domain.user.dto.request.CheckingByEmailRequestDto;
@@ -85,12 +85,12 @@ public class AuthByEmailService {
             simpleMailMessage.setSubject("새로운 비밀번호 입니다");
             simpleMailMessage.setText("비밀번호:" + newPassword+"\n 최대한 빠르게 변경 해주세요");
             User user=userRepository.findByEmail(email).
-                    orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_EMAIL));
+                    orElseThrow(()->new BaseException(ErrorCode.NOT_FOUND_EMAIL));
             user.setPassword(securityConfig.passwordEncoder().encode(newPassword));
             javaMailSender.send(simpleMailMessage);
 
         }else{
-            throw new CustomException(INVALID_CODE);
+            throw new BaseException(INVALID_CODE);
         }
     }
 
@@ -117,7 +117,7 @@ public class AuthByEmailService {
             session.invalidate();
         }
         else {
-            throw new CustomException(INVALID_CODE);
+            throw new BaseException(INVALID_CODE);
         }
     }
 

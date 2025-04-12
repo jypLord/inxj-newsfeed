@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-  @ExceptionHandler(CustomException.class)
-  public ResponseEntity<Map<String, Object>> handleCustomException(CustomException ex, HttpServletRequest request) {
+  @ExceptionHandler(BaseException.class)
+  public ResponseEntity<Map<String, Object>> handleBaseException(BaseException ex, HttpServletRequest request) {
     ErrorCode errorCode = ex.getErrorCode();
 
     return ResponseEntity
