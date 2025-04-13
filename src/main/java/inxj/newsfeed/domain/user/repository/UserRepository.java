@@ -23,7 +23,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     @Query("SELECT new inxj.newsfeed.domain.user.dto.response.SearchUsersResponseDto(u.username,u.profileImageUrl)" +
             " FROM User u WHERE u.username LIKE CONCAT('%', :username, '%') and u.deletedAt is null ")
-    List<User> findByUsernameAndDeletedAt(String username, LocalDateTime deletedAt);
+    List<SearchUsersResponseDto> findByUsernameAndDeletedAt(String username, LocalDateTime deletedAt);
 
     Optional<User> findById(Long id);
 
@@ -34,4 +34,5 @@ public interface UserRepository extends JpaRepository<User,Long> {
     boolean existsByUsername(String username);
 
 
+    boolean existsByPhoneNumber(String phoneNumber);
 }

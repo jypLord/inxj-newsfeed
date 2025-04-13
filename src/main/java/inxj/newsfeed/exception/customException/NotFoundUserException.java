@@ -1,4 +1,4 @@
-package inxj.newsfeed.exception;
+package inxj.newsfeed.exception.customException;
 
 import static inxj.newsfeed.exception.ErrorCode.NOT_FOUND_USER_ID;
 

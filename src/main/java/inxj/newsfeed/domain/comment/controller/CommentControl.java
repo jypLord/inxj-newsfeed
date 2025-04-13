@@ -4,9 +4,11 @@ import inxj.newsfeed.domain.comment.dto.RequestDto;
 import inxj.newsfeed.domain.comment.dto.ResponseDto;
 import inxj.newsfeed.domain.comment.service.CommentService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/posts/{postId}/comments")
 @RequiredArgsConstructor
+@Validated
 public class CommentControl {
 
     private final CommentService commentService;
@@ -21,12 +24,12 @@ public class CommentControl {
     // 생성
     @PostMapping()
     public ResponseEntity<Void> saveComment(
-            @RequestBody RequestDto requestDto,
+            @RequestBody @Valid RequestDto requestDto,
             @PathVariable Long postId,
-            HttpSession session) {
-        Long id = (Long) session.getAttribute("loginUser");
+            @SessionAttribute(name = "loginUser") Long userId) {
 
-        commentService.saveComment(id, postId, requestDto);
+
+        commentService.saveComment(userId, postId, requestDto);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -41,9 +44,9 @@ public class CommentControl {
     @PatchMapping("/{commentId}")
     public ResponseEntity<Void> updateComment(
             @PathVariable Long commentId,
-            @RequestBody RequestDto requestDto,
-            HttpSession session) {
-        Long userId = (Long) session.getAttribute("loginUser");
+            @RequestBody @Valid RequestDto requestDto,
+            @SessionAttribute(name = "loginUser") Long userId) {
+
 
         commentService.updateComment(userId, commentId, requestDto);
 
@@ -54,8 +57,8 @@ public class CommentControl {
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(
             @PathVariable Long commentId,
-            HttpSession session) {
-        Long userId = (Long) session.getAttribute("loginUser");
+            @SessionAttribute(name = "loginUser") Long userId) {
+
 
         commentService.deleteComment(userId, commentId);
 

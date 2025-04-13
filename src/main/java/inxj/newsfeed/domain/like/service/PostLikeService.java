@@ -1,13 +1,13 @@
 package inxj.newsfeed.domain.like.service;
 
 import inxj.newsfeed.common.util.EntityFetcher;
-import inxj.newsfeed.exception.BaseException;
 import inxj.newsfeed.exception.ErrorCode;
 import inxj.newsfeed.domain.like.entity.PostLike;
 import inxj.newsfeed.domain.like.entity.PostLikeId;
 import inxj.newsfeed.domain.like.repository.PostLikeRepository;
 import inxj.newsfeed.domain.post.entity.Post;
 import inxj.newsfeed.domain.user.entity.User;
+import inxj.newsfeed.exception.customException.BaseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

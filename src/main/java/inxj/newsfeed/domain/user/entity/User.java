@@ -37,6 +37,7 @@ public class User extends BaseEntity {
     @Column(unique = true)
     private String phoneNumber;
 
+    @Column(columnDefinition = "longtext")
     private String profileImageUrl;
 
     private LocalDateTime deletedAt;

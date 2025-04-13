@@ -11,12 +11,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 //@RequestMapping("/users")
 public class UserController {
 
@@ -54,6 +56,7 @@ public class UserController {
 
         return new ResponseEntity<>( HttpStatus.OK);
     }
+
     @PatchMapping(value = "/users/{id}/deactivate")
     public ResponseEntity<Void> deactivateUser(@PathVariable Long id, @RequestBody DeactivateRequestDto dto) {
         userService.deactivateUser(id, dto);

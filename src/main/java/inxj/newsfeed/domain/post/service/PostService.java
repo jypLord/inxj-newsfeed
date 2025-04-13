@@ -1,7 +1,6 @@
 package inxj.newsfeed.domain.post.service;
 
 import inxj.newsfeed.common.util.EntityFetcher;
-import inxj.newsfeed.exception.BaseException;
 import inxj.newsfeed.domain.friend.repository.FriendRepository;
 import inxj.newsfeed.domain.post.dto.PostCreateRequestDto;
 import inxj.newsfeed.domain.post.dto.PostResponseDto;
@@ -12,6 +11,7 @@ import inxj.newsfeed.domain.post.entity.Visibility;
 import inxj.newsfeed.domain.post.repository.PostRepository;
 import inxj.newsfeed.domain.user.entity.User;
 import inxj.newsfeed.domain.user.repository.UserRepository;
+import inxj.newsfeed.exception.customException.BaseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

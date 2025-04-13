@@ -1,13 +1,14 @@
 package inxj.newsfeed.domain.friend.service;
 
 import inxj.newsfeed.common.util.EntityFetcher;
-import inxj.newsfeed.exception.BaseException;
+
 import inxj.newsfeed.domain.friend.dto.FriendRequestResponseDto;
 import inxj.newsfeed.domain.friend.dto.FriendRequestWithStatusResponseDto;
 import inxj.newsfeed.domain.friend.dto.FriendResponseDto;
 import inxj.newsfeed.domain.friend.entity.FriendRequest;
 import inxj.newsfeed.domain.friend.repository.FriendRepository;
 import inxj.newsfeed.domain.user.entity.User;
+import inxj.newsfeed.exception.customException.BaseException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
