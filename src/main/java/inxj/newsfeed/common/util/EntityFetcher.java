@@ -2,7 +2,6 @@ package inxj.newsfeed.common.util;
 
 import inxj.newsfeed.domain.comment.entity.Comment;
 import inxj.newsfeed.domain.comment.repository.CommentRepository;
-import inxj.newsfeed.exception.BaseException;
 import inxj.newsfeed.exception.ErrorCode;
 import inxj.newsfeed.domain.friend.entity.FriendRequest;
 import inxj.newsfeed.domain.friend.repository.FriendRepository;
@@ -16,8 +15,9 @@ import inxj.newsfeed.domain.post.entity.Post;
 import inxj.newsfeed.domain.post.repository.PostRepository;
 import inxj.newsfeed.domain.user.entity.User;
 import inxj.newsfeed.domain.user.repository.UserRepository;
-import inxj.newsfeed.exception.FriendRequestAlreadyHandledException;
-import inxj.newsfeed.exception.NotFoundUserException;
+import inxj.newsfeed.exception.customException.FriendRequestAlreadyHandledException;
+import inxj.newsfeed.exception.customException.NotFoundUserException;
+import inxj.newsfeed.exception.customException.BaseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

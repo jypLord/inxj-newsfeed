@@ -1,5 +1,6 @@
-package inxj.newsfeed.exception;
+package inxj.newsfeed.exception.customException;
 
+import inxj.newsfeed.exception.ErrorCode;
 import lombok.Getter;
 
 @Getter

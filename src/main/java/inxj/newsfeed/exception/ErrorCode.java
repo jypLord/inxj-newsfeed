@@ -8,6 +8,18 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ErrorCode {
 
+
+    MISSING_PARAMETER("필수 요청 파라미터가 없습니다.", HttpStatus.BAD_REQUEST, "400-007"),
+    MISSING_HEADER("필수 요청 헤더가 없습니다.", HttpStatus.BAD_REQUEST, "400-008"),
+    TYPE_MISMATCH("요청 파라미터 타입이 잘못되었습니다.", HttpStatus.BAD_REQUEST, "400-009"),
+    NOT_READABLE_MESSAGE("요청 본문이 올바르지 않습니다.", HttpStatus.BAD_REQUEST, "400-010"),
+    METHOD_NOT_SUPPORTED("지원하지 않는 HTTP 메서드입니다.", HttpStatus.METHOD_NOT_ALLOWED, "405-001"),
+    NO_HANDLER_FOUND("존재하지 않는 URI입니다.", HttpStatus.NOT_FOUND, "404-007"),
+    VALIDATION_FAILED("유효성 검사 실패", HttpStatus.BAD_REQUEST, "400-011"),
+    CONSTRAINT_VIOLATION("요청이 제약 조건을 위반했습니다.", HttpStatus.BAD_REQUEST, "400-012"),
+    INTERNAL_ERROR("서버 내부 오류가 발생했습니다", HttpStatus.INTERNAL_SERVER_ERROR, "500-001"),
+    VALID_ERROR("VAILD가 유효하지 않습니디",HttpStatus.BAD_REQUEST,"400-013"),
+
     INVALID_EMAIL("유효하지 않은 이메일입니다.", HttpStatus.BAD_REQUEST, "400-001"),
     INVALID_PASSWORD("유효하지 않은 비밀번호입니다.", HttpStatus.BAD_REQUEST, "400-002"),
     INVALID_USER_ID("유효하지 않은 사용자입니다.", HttpStatus.BAD_REQUEST, "400-003"),

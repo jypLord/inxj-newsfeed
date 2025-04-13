@@ -3,6 +3,7 @@ package inxj.newsfeed.common.annotation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -28,8 +29,7 @@ public class EnumListValidator implements ConstraintValidator<ValidEnum, List<St
     }
     List<String> convertedValue = checkIgnoreCase(values);  // 대소문자 무시
 
-    boolean valid = convertedValue.stream()
-        .allMatch(v -> convertedValue.contains(v));// 유효값 검증
+    boolean valid = new HashSet<>(convertedValue).containsAll(convertedValue);// 유효값 검증
     if(valid) return true;
     else {
       constraintValidatorContext.disableDefaultConstraintViolation();

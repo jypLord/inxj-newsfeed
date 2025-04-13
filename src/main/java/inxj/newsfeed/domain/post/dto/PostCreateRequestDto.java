@@ -2,6 +2,7 @@ package inxj.newsfeed.domain.post.dto;
 
 import inxj.newsfeed.common.annotation.ValidEnum;
 import inxj.newsfeed.domain.post.entity.Visibility;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.util.List;
@@ -9,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@Valid
 @AllArgsConstructor
 public class PostCreateRequestDto {
   @Size(min=1, max=1000, message = "게시글은 1000글자 이내여야 합니다.")

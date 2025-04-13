@@ -2,7 +2,7 @@ package inxj.newsfeed.domain.like.service;
 
 import inxj.newsfeed.domain.comment.entity.Comment;
 import inxj.newsfeed.common.util.EntityFetcher;
-import inxj.newsfeed.exception.BaseException;
+import inxj.newsfeed.exception.customException.BaseException;
 import inxj.newsfeed.exception.ErrorCode;
 import inxj.newsfeed.domain.like.entity.CommentLike;
 import inxj.newsfeed.domain.like.entity.CommentLikeId;

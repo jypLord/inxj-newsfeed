@@ -23,7 +23,8 @@ public class LoginFilter extends OncePerRequestFilter {
             new AntPathRequestMatcher("/users/*/password", "POST"),// 비밀번호 찾기
             new AntPathRequestMatcher("/users/*/password", "POST"), // 비밀번호 찾기
             new AntPathRequestMatcher("/auth", "POST"),
-            new AntPathRequestMatcher("/authMail", "POST")
+            new AntPathRequestMatcher("/authMail", "POST"),
+            new AntPathRequestMatcher("/email","POST")
 
 
     );

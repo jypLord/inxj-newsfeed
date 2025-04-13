@@ -1,12 +1,12 @@
 package inxj.newsfeed.domain.user.service;
 
 import inxj.newsfeed.common.config.SecurityConfig;
-import inxj.newsfeed.exception.BaseException;
 import inxj.newsfeed.exception.ErrorCode;
 import inxj.newsfeed.domain.user.dto.request.AuthByEmailRequestDto;
 import inxj.newsfeed.domain.user.dto.request.CheckingByEmailRequestDto;
 import inxj.newsfeed.domain.user.entity.User;
 import inxj.newsfeed.domain.user.repository.UserRepository;
+import inxj.newsfeed.exception.customException.BaseException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;

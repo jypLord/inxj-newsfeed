@@ -4,13 +4,13 @@ import static inxj.newsfeed.exception.ErrorCode.*;
 
 import inxj.newsfeed.common.util.EntityFetcher;
 import inxj.newsfeed.domain.user.dto.request.*;
-import inxj.newsfeed.exception.BaseException;
-import inxj.newsfeed.domain.user.dto.response.ChangePasswordResponseDto;
 import inxj.newsfeed.domain.user.dto.response.ProfileResponseDto;
 import inxj.newsfeed.domain.user.dto.response.SearchUsersResponseDto;
 import inxj.newsfeed.domain.user.entity.User;
 import inxj.newsfeed.domain.user.repository.UserRepository;
 import inxj.newsfeed.exception.ErrorCode;
+import inxj.newsfeed.exception.customException.BaseException;
+import inxj.newsfeed.exception.customException.EmailConflictException;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -41,7 +41,7 @@ public class UserService {
         }
 
         if (userRepository.existsByEmail(dto.getEmail())) {
-            throw new BaseException(ErrorCode.CONFLICT_EMAIL);
+            throw new EmailConflictException();
         }
 
         //TODO: CONFLICT_USERNAME 추가 요청후 변경
@@ -73,7 +73,7 @@ public class UserService {
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new BaseException(INVALID_EMAIL));
 
-        if (!isPasswordValid(dto.getPassword(), user.getPassword())) {
+        if (isPasswordValid(dto.getPassword(), user.getPassword())) {
             throw new BaseException(INVALID_PASSWORD);
         }
         if (user.getDeletedAt()==null) {
@@ -84,7 +84,8 @@ public class UserService {
     }
 
     public ProfileResponseDto viewProfile(Long id) {
-        User user = userRepository.findByIdAndDeletedAt(id, null).orElseThrow(() -> new BaseException(INVALID_USER_ID));
+        User user = userRepository.findByIdAndDeletedAt(id, null).orElseThrow(()
+                -> new BaseException(INVALID_USER_ID));
 
         return ProfileResponseDto.builder()
                 .profileImageUrl(user.getProfileImageUrl())
@@ -97,7 +98,7 @@ public class UserService {
     public void modifyProfile(Long id, UpdateProfileRequestDto dto) {
         User user = entityFetcher.getUserOrThrow(id);
 
-        if (!isPasswordValid(dto.getPassword(), user.getPassword())) {
+        if (isPasswordValid(dto.getPassword(), user.getPassword())) {
             throw new BaseException(INVALID_PASSWORD);
         }
 
@@ -106,9 +107,9 @@ public class UserService {
 
         // 전화번호 유일성 확인
         if (dto.getPhoneNumber() != null) {
-            Optional<User> existNumber = userRepository.findByPhoneNumber(dto.getPhoneNumber());
 
-            if (existNumber.isPresent()) {
+
+            if (userRepository.existsByPhoneNumber(dto.getPhoneNumber())) {
                 throw new BaseException(CONFLICT_STATUS);
             }
 
@@ -124,7 +125,7 @@ public class UserService {
                     
         User user = entityFetcher.getUserOrThrow(id);
 
-        if (!isPasswordValid(requestDto.getOldPassword(),user.getPassword())){
+        if (isPasswordValid(requestDto.getOldPassword(), user.getPassword())){
             throw new BaseException(INVALID_PASSWORD);
         }
 
@@ -133,31 +134,15 @@ public class UserService {
     }
 
     public List<SearchUsersResponseDto> searchUsers(String username) {
-        List<User> users = userRepository.findByUsernameAndDeletedAt(username, null);
 
-        List<SearchUsersResponseDto> responseDTOList = new ArrayList<>();
-
-        for (User user : users) {
-            SearchUsersResponseDto responseDto = new SearchUsersResponseDto(user.getUsername(), user.getProfileImageUrl());
-            responseDTOList.add(responseDto);
-        }
-
-        return responseDTOList;
-    }
-
-    public ChangePasswordResponseDto changePassword(Long id) {
-        entityFetcher.getUserOrThrow(id);
-
-        String password="12345678910";
-
-        return new ChangePasswordResponseDto(password);
+        return userRepository.findByUsernameAndDeletedAt(username, null);
     }
 
     @Transactional
     public void deactivateUser(Long id, DeactivateRequestDto dto) {
         User user = entityFetcher.getUserOrThrow(id);
 
-        if (!isPasswordValid(dto.getPassword(), user.getPassword())) {
+        if (isPasswordValid(dto.getPassword(), user.getPassword())) {
             throw new BaseException(INVALID_PASSWORD);
         }
 
@@ -165,7 +150,7 @@ public class UserService {
     }
 
     public boolean isPasswordValid(String rawPassword, String encodedPassword) {
-        return passwordEncoder.matches(rawPassword, encodedPassword);
+        return !passwordEncoder.matches(rawPassword, encodedPassword);
     }
 
 }
