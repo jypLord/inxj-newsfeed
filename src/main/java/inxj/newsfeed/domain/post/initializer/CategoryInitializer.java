@@ -5,8 +5,10 @@ import inxj.newsfeed.domain.post.entity.CategoryType;
 import inxj.newsfeed.domain.post.repository.PostCategoryRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+@Profile("dev")
 @Component
 @RequiredArgsConstructor
 class CategoryInitializer {
