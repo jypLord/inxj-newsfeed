@@ -12,6 +12,7 @@ import inxj.newsfeed.domain.post.repository.PostRepository;
 import inxj.newsfeed.domain.user.entity.User;
 import inxj.newsfeed.domain.user.repository.UserRepository;
 import inxj.newsfeed.exception.customException.BaseException;
+import inxj.newsfeed.exception.customException.ForbiddenPostException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +52,7 @@ public class PostService {
 
             // 게시글 작성자와 친구가 아니라면
             if (!friendList.contains(post.getUser())) {
-                throw new BaseException(FORBIDDEN_POST);
+                throw new ForbiddenPostException();
             }
         }
         return new PostResponseDto(post);
@@ -137,7 +138,7 @@ public class PostService {
         }
         // 일치하지 않는 경우
         else {
-            throw new BaseException(FORBIDDEN_POST);
+            throw new ForbiddenPostException();
         }
     }
 
@@ -151,7 +152,7 @@ public class PostService {
         }
         // 일치하지 않는 경우
         else {
-            throw new BaseException(FORBIDDEN_POST);
+            throw new ForbiddenPostException();
         }
     }
 }
