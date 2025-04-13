@@ -5,6 +5,8 @@ import inxj.newsfeed.domain.user.dto.response.ChangePasswordResponseDto;
 import inxj.newsfeed.domain.user.dto.response.ProfileResponseDto;
 import inxj.newsfeed.domain.user.dto.response.SearchUsersResponseDto;
 import inxj.newsfeed.domain.user.service.UserService;
+import inxj.newsfeed.exception.ErrorCode;
+import inxj.newsfeed.exception.customException.BaseException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -15,6 +17,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
+
+import static inxj.newsfeed.common.constant.Const.LOGIN_USER;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,12 +36,26 @@ public class UserController {
     }
 
     @GetMapping(value = "/users/{id}")
-    public ResponseEntity<ProfileResponseDto> viewProfile(@PathVariable Long id) {
+    public ResponseEntity<ProfileResponseDto> viewProfile(@PathVariable Long id,
+                                                          @SessionAttribute(LOGIN_USER) Long loginUserId) {
+
+        if (!Objects.equals(id, loginUserId)) {
+            throw new BaseException(ErrorCode.UNAUTHORIZED_USER_ID);
+        }
+
         return ResponseEntity.ok(userService.viewProfile(id));
     }
 
     @PatchMapping(value = "/users/{id}")
-    public ResponseEntity<Void> modifyProfile(@PathVariable Long id, @RequestBody @Valid UpdateProfileRequestDto dto) {
+    public ResponseEntity<Void> modifyProfile(@PathVariable Long id,
+                                              @RequestBody @Valid UpdateProfileRequestDto dto,
+                                              @SessionAttribute(LOGIN_USER) Long loginUserId) {
+
+        if (!Objects.equals(id, loginUserId)) {
+            throw new BaseException(ErrorCode.UNAUTHORIZED_USER_ID);
+        }
+
+
         userService.modifyProfile(id, dto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -50,16 +69,28 @@ public class UserController {
     }
 
     @PostMapping(value = "/users/{id}/password")
-    public ResponseEntity<Void> modifyMyPassword(@PathVariable Long id, @RequestBody ModifyPasswordRequestDto requestDto) {
+    public ResponseEntity<Void> modifyMyPassword(@PathVariable Long id,
+                                                 @RequestBody ModifyPasswordRequestDto requestDto,
+                                                 @SessionAttribute(LOGIN_USER) Long loginUserId) {
 
-        userService.modifyPassword(id,requestDto);
+        if (!Objects.equals(id, loginUserId)) {
+            throw new BaseException(ErrorCode.UNAUTHORIZED_USER_ID);
+        }
 
-        return new ResponseEntity<>( HttpStatus.OK);
+        userService.modifyPassword(id, requestDto);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PatchMapping(value = "/users/{id}/deactivate")
-    public ResponseEntity<Void> deactivateUser(@PathVariable Long id, @RequestBody DeactivateRequestDto dto) {
+    public ResponseEntity<Void> deactivateUser(@PathVariable Long id,
+                                               @RequestBody DeactivateRequestDto dto,
+                                               @SessionAttribute(LOGIN_USER) Long loginUserId) {
         userService.deactivateUser(id, dto);
+
+        if (!Objects.equals(id, loginUserId)) {
+            throw new BaseException(ErrorCode.UNAUTHORIZED_USER_ID);
+        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

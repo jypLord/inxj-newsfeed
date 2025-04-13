@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static inxj.newsfeed.common.constant.Const.LOGIN_USER;
+
 @RestController
 @RequestMapping("/posts/{postId}/comments")
 @RequiredArgsConstructor
@@ -26,10 +28,10 @@ public class CommentControl {
     public ResponseEntity<Void> saveComment(
             @RequestBody @Valid RequestDto requestDto,
             @PathVariable Long postId,
-            @SessionAttribute(name = "loginUser") Long userId) {
+            @SessionAttribute(LOGIN_USER) Long loginUserId) {
 
 
-        commentService.saveComment(userId, postId, requestDto);
+        commentService.saveComment(loginUserId, postId, requestDto);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -45,10 +47,10 @@ public class CommentControl {
     public ResponseEntity<Void> updateComment(
             @PathVariable Long commentId,
             @RequestBody @Valid RequestDto requestDto,
-            @SessionAttribute(name = "loginUser") Long userId) {
+            @SessionAttribute(LOGIN_USER) Long loginUserId) {
 
 
-        commentService.updateComment(userId, commentId, requestDto);
+        commentService.updateComment(loginUserId, commentId, requestDto);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -57,10 +59,10 @@ public class CommentControl {
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(
             @PathVariable Long commentId,
-            @SessionAttribute(name = "loginUser") Long userId) {
+            @SessionAttribute(LOGIN_USER) Long loginUserId) {
 
 
-        commentService.deleteComment(userId, commentId);
+        commentService.deleteComment(loginUserId, commentId);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
