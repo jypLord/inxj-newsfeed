@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -27,7 +28,7 @@ public class GlobalExceptionHandler {
     // ✅ BaseException 처리
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<Map<String, Object>> handleBaseException(BaseException ex, HttpServletRequest request) {
-        return buildErrorResponse(ex.getErrorCode(), request.getRequestURI());
+        return buildErrorResponse(ex.getErrorCode(), request.getRequestURI(),null);
     }
 
     // ✅ @Valid 유효성 검사 실패
@@ -40,100 +41,77 @@ public class GlobalExceptionHandler {
                 ))
                 .collect(Collectors.toList());
 
-        return ResponseEntity.badRequest().body(Map.of(
-                "timestamp", LocalDateTime.now(),
-                "status", 400,
-                "error", "BAD_REQUEST",
-                "code", "C001",
-                "message", "잘못된 입력값입니다",
-                "path", request.getRequestURI(),
-                "fieldErrors", fieldErrors
-        ));
+        return buildErrorResponse(ErrorCode.VALID_ERROR, request.getRequestURI(),fieldErrors);
     }
 
-    // ✅ 제약조건 위반
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Map<String, Object>> handleConstraintViolation(ConstraintViolationException ex, HttpServletRequest request) {
-        return buildBasicError(400, "BAD_REQUEST", "400", ex.getMessage(), request.getRequestURI());
+        return buildErrorResponse(ErrorCode.CONSTRAINT_VIOLATION, request.getRequestURI(),null);
     }
 
-    // ✅ 파라미터 타입 불일치
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<Map<String, Object>> handleTypeMismatch(Exception e, HttpServletRequest request) {
-        log.error("MethodArgumentTypeMismatchException : {}", e.getMessage());
-        return buildBasicError(400, "BAD_REQUEST", "C002", "요청 파라미터 타입이 잘못되었습니다.", request.getRequestURI());
+    public ResponseEntity<Map<String, Object>> handleTypeMismatch(MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
+        log.error("MethodArgumentTypeMismatchException : {}", ex.getMessage());
+        return buildErrorResponse(ErrorCode.TYPE_MISMATCH, request.getRequestURI(),null);
     }
 
-    // ✅ Spring 6 이상 유효성 실패
     @ExceptionHandler(MethodValidationException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationExceptionSpring6(Exception e, HttpServletRequest request) {
-        log.error("HandlerMethodValidationException : {}", e.getMessage());
-        return buildBasicError(400, "BAD_REQUEST", "C003", "유효성 검사 실패", request.getRequestURI());
+    public ResponseEntity<Map<String, Object>> handleValidationExceptionSpring6(MethodValidationException ex, HttpServletRequest request) {
+        log.error("MethodValidationException : {}", ex.getMessage());
+        return buildErrorResponse(ErrorCode.VALIDATION_FAILED, request.getRequestURI(),null);
     }
 
-    // ✅ 요청 헤더 누락
     @ExceptionHandler(MissingRequestHeaderException.class)
-    public ResponseEntity<Map<String, Object>> handleMissingHeader(Exception e, HttpServletRequest request) {
-        log.error("MissingRequestHeaderException : {}", e.getMessage());
-        return buildBasicError(400, "BAD_REQUEST", "C004", "필수 요청 헤더가 없습니다", request.getRequestURI());
+    public ResponseEntity<Map<String, Object>> handleMissingHeader(MissingRequestHeaderException ex, HttpServletRequest request) {
+        log.error("MissingRequestHeaderException : {}", ex.getMessage());
+        return buildErrorResponse(ErrorCode.MISSING_HEADER, request.getRequestURI(),null);
     }
 
-    // ✅ 요청 파라미터 누락
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<Map<String, Object>> handleMissingParameter(Exception e, HttpServletRequest request) {
-        log.error("MissingServletRequestParameterException : {}", e.getMessage());
-        return buildBasicError(400, "BAD_REQUEST", "C005", "필수 요청 파라미터가 없습니다", request.getRequestURI());
+    public ResponseEntity<Map<String, Object>> handleMissingParameter(MissingServletRequestParameterException ex, HttpServletRequest request) {
+        log.error("MissingServletRequestParameterException : {}", ex.getMessage());
+        return buildErrorResponse(ErrorCode.MISSING_PARAMETER, request.getRequestURI(),null);
     }
 
-    // ✅ JSON 역직렬화 실패
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Map<String, Object>> handleUnreadableMessage(HttpMessageNotReadableException e, HttpServletRequest request) {
-        log.error("HttpMessageNotReadableException : {}", e.getMessage());
-        return buildBasicError(400, "BAD_REQUEST", "C006", "요청 본문이 올바르지 않습니다", request.getRequestURI());
+    public ResponseEntity<Map<String, Object>> handleUnreadableMessage(HttpMessageNotReadableException ex, HttpServletRequest request) {
+        log.error("HttpMessageNotReadableException : {}", ex.getMessage());
+        return buildErrorResponse(ErrorCode.NOT_READABLE_MESSAGE, request.getRequestURI(),null);
     }
 
-    // ✅ 존재하지 않는 URI
-    @ExceptionHandler(NoHandlerFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleNoHandler(NoHandlerFoundException e, HttpServletRequest request) {
-        log.error("NoHandlerFoundException : {}", e.getMessage());
-        return buildBasicError(404, "NOT_FOUND", "C007", "존재하지 않는 URI입니다", request.getRequestURI());
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleNoHandler(NoResourceFoundException ex, HttpServletRequest request) {
+        log.error("NoHandlerFoundException : {}", ex.getMessage());
+        return buildErrorResponse(ErrorCode.NO_HANDLER_FOUND, request.getRequestURI(),null);
     }
 
-    // ✅ 지원하지 않는 HTTP 메서드
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<Map<String, Object>> handleUnsupportedMethod(Exception e, HttpServletRequest request) {
-        log.error("HttpRequestMethodNotSupportedException : {}", e.getMessage());
-        return buildBasicError(405, "METHOD_NOT_ALLOWED", "C008", "지원하지 않는 HTTP 메서드입니다", request.getRequestURI());
+    public ResponseEntity<Map<String, Object>> handleUnsupportedMethod(HttpRequestMethodNotSupportedException ex, HttpServletRequest request) {
+        log.error("HttpRequestMethodNotSupportedException : {}", ex.getMessage());
+        return buildErrorResponse(ErrorCode.METHOD_NOT_SUPPORTED, request.getRequestURI(),null);
     }
 
-    // ✅ 알 수 없는 예외
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleUnknownException(Exception e, HttpServletRequest request) {
-        log.error("Exception : {} {}", e.getClass(), e.getMessage());
-        return buildBasicError(500, "INTERNAL_SERVER_ERROR", "C999", "서버 내부 오류가 발생했습니다", request.getRequestURI());
+    public ResponseEntity<Map<String, Object>> handleUnknownException(Exception ex, HttpServletRequest request) {
+        log.error("Exception : {} {}", ex.getClass(), ex.getMessage());
+        return buildErrorResponse(ErrorCode.INTERNAL_ERROR, request.getRequestURI(),null);
+    }
+    private ResponseEntity<Map<String, Object>> buildErrorResponse(ErrorCode errorCode, String path,List<Map<String, String>> fieldErrors) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("status", errorCode.getHttpStatus().value());
+        body.put("error", errorCode.getHttpStatus().getReasonPhrase());
+        body.put("code", errorCode.getErrorCode());
+        body.put("message", errorCode.getMessage());
+        body.put("path", path);
+        body.put("timestamp", LocalDateTime.now());
+        if (fieldErrors != null && !fieldErrors.isEmpty()) {
+            body.put("fieldErrors", fieldErrors);
+        }
+
+
+        return new ResponseEntity<>(body, errorCode.getHttpStatus());
     }
 
-    // ✅ 공통 응답 생성 메서드 (ErrorCode 기반)
-    private ResponseEntity<Map<String, Object>> buildErrorResponse(ErrorCode errorCode, String path) {
-        return ResponseEntity.status(errorCode.getHttpStatus()).body(Map.of(
-                "timestamp", LocalDateTime.now(),
-                "status", errorCode.getHttpStatus().value(),
-                "error", errorCode.getHttpStatus().name(),
-                "code", errorCode.getErrorCode(),
-                "message", errorCode.getMessage(),
-                "path", path
-        ));
-    }
 
-    // ✅ 공통 응답 생성 메서드 (직접 정의)
-    private ResponseEntity<Map<String, Object>> buildBasicError(int status, String error, String code, String message, String path) {
-        return ResponseEntity.status(status).body(Map.of(
-                "timestamp", LocalDateTime.now(),
-                "status", status,
-                "error", error,
-                "code", code,
-                "message", message,
-                "path", path
-        ));
-    }
+
 }
