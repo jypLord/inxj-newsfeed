@@ -4,8 +4,7 @@ import static inxj.newsfeed.exception.ErrorCode.*;
 
 import inxj.newsfeed.common.util.EntityFetcher;
 import inxj.newsfeed.domain.user.dto.request.*;
-import inxj.newsfeed.exception.CustomException;
-import inxj.newsfeed.domain.user.dto.request.*;
+import inxj.newsfeed.exception.BaseException;
 import inxj.newsfeed.domain.user.dto.response.ChangePasswordResponseDto;
 import inxj.newsfeed.domain.user.dto.response.ProfileResponseDto;
 import inxj.newsfeed.domain.user.dto.response.SearchUsersResponseDto;
@@ -38,16 +37,16 @@ public class UserService {
         String verified = redisTemplate.opsForValue().get(verifiedKey);
 
         if (!"true".equals(verified)) {
-            throw new CustomException(UNAUTHORIZED_CODE);  // 이메일 인증 안됨 예외
+            throw new BaseException(UNAUTHORIZED_CODE);  // 이메일 인증 안됨 예외
         }
 
         if (userRepository.existsByEmail(dto.getEmail())) {
-            throw new CustomException(ErrorCode.CONFLICT_EMAIL);
+            throw new BaseException(ErrorCode.CONFLICT_EMAIL);
         }
 
         //TODO: CONFLICT_USERNAME 추가 요청후 변경
         if (userRepository.existsByUsername(dto.getUsername())) {
-            throw new CustomException(ErrorCode.CONFLICT_STATUS);
+            throw new BaseException(ErrorCode.CONFLICT_STATUS);
         }
 
         //TODO: CONFLICT_USERNAME 추가 요청후 변경
@@ -72,20 +71,20 @@ public class UserService {
     public void login(LoginRequestDto dto, HttpSession session) {
 
         User user = userRepository.findByEmail(dto.getEmail())
-                .orElseThrow(() -> new CustomException(INVALID_EMAIL));
+                .orElseThrow(() -> new BaseException(INVALID_EMAIL));
 
         if (!isPasswordValid(dto.getPassword(), user.getPassword())) {
-            throw new CustomException(INVALID_PASSWORD);
+            throw new BaseException(INVALID_PASSWORD);
         }
         if (user.getDeletedAt()==null) {
             session.setAttribute("loginUser", user.getId());
         } else {
-            throw new CustomException(INVALID_USER_ID);
+            throw new BaseException(INVALID_USER_ID);
         }
     }
 
     public ProfileResponseDto viewProfile(Long id) {
-        User user = userRepository.findByIdAndDeletedAt(id, null).orElseThrow(() -> new CustomException(INVALID_USER_ID));
+        User user = userRepository.findByIdAndDeletedAt(id, null).orElseThrow(() -> new BaseException(INVALID_USER_ID));
 
         return ProfileResponseDto.builder()
                 .profileImageUrl(user.getProfileImageUrl())
@@ -99,7 +98,7 @@ public class UserService {
         User user = entityFetcher.getUserOrThrow(id);
 
         if (!isPasswordValid(dto.getPassword(), user.getPassword())) {
-            throw new CustomException(INVALID_PASSWORD);
+            throw new BaseException(INVALID_PASSWORD);
         }
 
         user.setBirthday(dto.getBirthday());
@@ -110,7 +109,7 @@ public class UserService {
             Optional<User> existNumber = userRepository.findByPhoneNumber(dto.getPhoneNumber());
 
             if (existNumber.isPresent()) {
-                throw new CustomException(CONFLICT_STATUS);
+                throw new BaseException(CONFLICT_STATUS);
             }
 
             user.setPhoneNumber(dto.getPhoneNumber());
@@ -126,7 +125,7 @@ public class UserService {
         User user = entityFetcher.getUserOrThrow(id);
 
         if (!isPasswordValid(requestDto.getOldPassword(),user.getPassword())){
-            throw new CustomException(INVALID_PASSWORD);
+            throw new BaseException(INVALID_PASSWORD);
         }
 
         user.setPassword(passwordEncoder.encode(requestDto.getNewPassword()));
@@ -159,7 +158,7 @@ public class UserService {
         User user = entityFetcher.getUserOrThrow(id);
 
         if (!isPasswordValid(dto.getPassword(), user.getPassword())) {
-            throw new CustomException(INVALID_PASSWORD);
+            throw new BaseException(INVALID_PASSWORD);
         }
 
         user.setDeletedAt(LocalDateTime.now());

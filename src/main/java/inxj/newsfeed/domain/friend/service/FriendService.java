@@ -1,7 +1,7 @@
 package inxj.newsfeed.domain.friend.service;
 
 import inxj.newsfeed.common.util.EntityFetcher;
-import inxj.newsfeed.exception.CustomException;
+import inxj.newsfeed.exception.BaseException;
 import inxj.newsfeed.domain.friend.dto.FriendRequestResponseDto;
 import inxj.newsfeed.domain.friend.dto.FriendRequestWithStatusResponseDto;
 import inxj.newsfeed.domain.friend.dto.FriendResponseDto;
@@ -60,7 +60,7 @@ public class FriendService {
         if (foundFriendRequest.getStatus() == ACCEPT) {
             foundFriendRequest.setStatus(DELETED);
         }else{
-            throw new CustomException(INVALID_FRIEND_REQUEST);
+            throw new BaseException(INVALID_FRIEND_REQUEST);
         }
     }
 
@@ -78,7 +78,7 @@ public class FriendService {
         User targetUser = entityFetcher.getUserOrThrow(targetId);
 
         if(loginUser.equals(targetUser)){
-            throw new CustomException(INVALID_FRIEND_REQUEST);
+            throw new BaseException(INVALID_FRIEND_REQUEST);
         }
 
         Optional<FriendRequest> foundFriendRequest = friendRepository.findInteractiveRequest(loginUser, targetUser);
@@ -93,7 +93,7 @@ public class FriendService {
                 || foundFriendRequest.get().getStatus() == DELETED) {
             foundFriendRequest.get().setStatus(PENDING);
         }else{
-            throw new CustomException(CONFLICT_STATUS);
+            throw new BaseException(CONFLICT_STATUS);
         }
     }
 
@@ -113,7 +113,7 @@ public class FriendService {
         if (foundFriendRequest.getStatus() == PENDING) {
             foundFriendRequest.setStatus(ACCEPT);
         }else {
-            throw new CustomException(INVALID_FRIEND_REQUEST);
+            throw new BaseException(INVALID_FRIEND_REQUEST);
         }
     }
 
@@ -133,7 +133,7 @@ public class FriendService {
         if (foundFriendRequest.getStatus() == PENDING) {
             foundFriendRequest.setStatus(REJECT);
         }else{
-            throw new CustomException(INVALID_FRIEND_REQUEST);
+            throw new BaseException(INVALID_FRIEND_REQUEST);
         }
     }
 

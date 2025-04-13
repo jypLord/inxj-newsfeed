@@ -1,7 +1,7 @@
 package inxj.newsfeed.domain.post.service;
 
 import inxj.newsfeed.common.util.EntityFetcher;
-import inxj.newsfeed.exception.CustomException;
+import inxj.newsfeed.exception.BaseException;
 import inxj.newsfeed.domain.friend.repository.FriendRepository;
 import inxj.newsfeed.domain.post.dto.PostCreateRequestDto;
 import inxj.newsfeed.domain.post.dto.PostResponseDto;
@@ -51,7 +51,7 @@ public class PostService {
 
             // 게시글 작성자와 친구가 아니라면
             if (!friendList.contains(post.getUser())) {
-                throw new CustomException(FORBIDDEN_POST);
+                throw new BaseException(FORBIDDEN_POST);
             }
         }
         return new PostResponseDto(post);
@@ -137,7 +137,7 @@ public class PostService {
         }
         // 일치하지 않는 경우
         else {
-            throw new CustomException(FORBIDDEN_POST);
+            throw new BaseException(FORBIDDEN_POST);
         }
     }
 
@@ -151,7 +151,7 @@ public class PostService {
         }
         // 일치하지 않는 경우
         else {
-            throw new CustomException(FORBIDDEN_POST);
+            throw new BaseException(FORBIDDEN_POST);
         }
     }
 }

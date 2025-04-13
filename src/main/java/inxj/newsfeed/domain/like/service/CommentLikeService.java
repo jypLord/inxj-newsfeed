@@ -2,7 +2,7 @@ package inxj.newsfeed.domain.like.service;
 
 import inxj.newsfeed.domain.comment.entity.Comment;
 import inxj.newsfeed.common.util.EntityFetcher;
-import inxj.newsfeed.exception.CustomException;
+import inxj.newsfeed.exception.BaseException;
 import inxj.newsfeed.exception.ErrorCode;
 import inxj.newsfeed.domain.like.entity.CommentLike;
 import inxj.newsfeed.domain.like.entity.CommentLikeId;
@@ -26,7 +26,7 @@ public class CommentLikeService {
 
         // 중복 체크
         if (commentLikeRepository.findById(commentLikeId).isPresent()) {
-            throw new CustomException(ErrorCode.CONFLICT_STATUS);
+            throw new BaseException(ErrorCode.CONFLICT_STATUS);
         }
 
         // 저장

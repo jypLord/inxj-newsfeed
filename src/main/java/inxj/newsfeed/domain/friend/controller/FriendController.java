@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static inxj.newsfeed.common.constant.Const.LOGIN_USER;
+
 @RestController
 @RequiredArgsConstructor
 public class FriendController {
@@ -22,8 +24,7 @@ public class FriendController {
     친구 목록 조회 API
      */
     @GetMapping("/friends")
-    public ResponseEntity<List<FriendResponseDto>> findAllFriends(HttpSession session){
-        Long userId = (Long) session.getAttribute("loginUser");
+    public ResponseEntity<List<FriendResponseDto>> findAllFriends(@SessionAttribute(LOGIN_USER) Long userId){
         return new ResponseEntity<>(friendService.findAllFriends(userId), HttpStatus.OK);
     }
 
@@ -31,8 +32,7 @@ public class FriendController {
     친구 삭제 API
      */
     @DeleteMapping("/friends/{targetId}")
-    public ResponseEntity<Void> deleteFriend(HttpSession session, @PathVariable Long targetId){
-        Long loginUserId = (Long) session.getAttribute("loginUser");
+    public ResponseEntity<Void> deleteFriend(@SessionAttribute(LOGIN_USER) Long loginUserId, @PathVariable Long targetId){
         friendService.deleteFriend(loginUserId, targetId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -41,8 +41,7 @@ public class FriendController {
     친구 요청 API
      */
     @PostMapping("/friend-requests/{targetId}")
-    public ResponseEntity<Void> requestFriend(HttpSession session, @PathVariable Long targetId){
-        Long loginUserId = (Long) session.getAttribute("loginUser");
+    public ResponseEntity<Void> requestFriend(@SessionAttribute(LOGIN_USER) Long loginUserId, @PathVariable Long targetId){
         friendService.requestFriend(loginUserId, targetId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -51,8 +50,7 @@ public class FriendController {
     친구 요청 수락 API
      */
     @PostMapping("/friend-requests/accept/{targetId}")
-    public ResponseEntity<Void> acceptRequest(HttpSession session, @PathVariable Long targetId){
-        Long loginUserId = (Long) session.getAttribute("loginUser");
+    public ResponseEntity<Void> acceptRequest(@SessionAttribute(LOGIN_USER) Long loginUserId, @PathVariable Long targetId){
         friendService.acceptRequest(loginUserId, targetId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -61,8 +59,7 @@ public class FriendController {
     친구 요청 거절 API
      */
     @PostMapping("/friend-requests/reject/{targetId}")
-    public ResponseEntity<Void> rejectRequest(HttpSession session, @PathVariable Long targetId){
-        Long loginUserId = (Long) session.getAttribute("loginUser");
+    public ResponseEntity<Void> rejectRequest(@SessionAttribute(LOGIN_USER) Long loginUserId, @PathVariable Long targetId){
         friendService.rejectRequest(loginUserId, targetId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -71,8 +68,7 @@ public class FriendController {
     보낸 친구 요청 목록 조회 API
      */
     @GetMapping("/friend-requests/sent")
-    public ResponseEntity<List<FriendRequestWithStatusResponseDto>> findSentRequests(HttpSession session){
-        Long userId = (Long) session.getAttribute("loginUser");
+    public ResponseEntity<List<FriendRequestWithStatusResponseDto>> findSentRequests(@SessionAttribute(LOGIN_USER) Long userId){
         return new ResponseEntity<>(friendService.findSentRequests(userId), HttpStatus.OK);
     }
 
@@ -80,8 +76,7 @@ public class FriendController {
     받은 친구 요청 목록 조회 API
      */
     @GetMapping("/friend-requests/received")
-    public ResponseEntity<List<FriendRequestResponseDto>> findReceivedRequests(HttpSession session){
-        Long userId = (Long) session.getAttribute("loginUser");
+    public ResponseEntity<List<FriendRequestResponseDto>> findReceivedRequests(@SessionAttribute(LOGIN_USER) Long userId){
         return new ResponseEntity<>(friendService.findReceivedRequests(userId), HttpStatus.OK);
     }
 }

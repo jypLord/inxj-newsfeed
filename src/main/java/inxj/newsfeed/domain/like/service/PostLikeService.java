@@ -1,7 +1,7 @@
 package inxj.newsfeed.domain.like.service;
 
 import inxj.newsfeed.common.util.EntityFetcher;
-import inxj.newsfeed.exception.CustomException;
+import inxj.newsfeed.exception.BaseException;
 import inxj.newsfeed.exception.ErrorCode;
 import inxj.newsfeed.domain.like.entity.PostLike;
 import inxj.newsfeed.domain.like.entity.PostLikeId;
@@ -26,7 +26,7 @@ public class PostLikeService {
 
         // 중복 체크
         if (postLikeRepository.findById(postLikeId).isPresent()) {
-            throw new CustomException(ErrorCode.CONFLICT_STATUS);
+            throw new BaseException(ErrorCode.CONFLICT_STATUS);
         }
 
         // 저장
