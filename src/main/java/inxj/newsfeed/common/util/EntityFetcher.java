@@ -15,10 +15,7 @@ import inxj.newsfeed.domain.post.entity.Post;
 import inxj.newsfeed.domain.post.repository.PostRepository;
 import inxj.newsfeed.domain.user.entity.User;
 import inxj.newsfeed.domain.user.repository.UserRepository;
-import inxj.newsfeed.exception.customException.FriendRequestAlreadyHandledException;
-import inxj.newsfeed.exception.customException.NotFoundPostException;
-import inxj.newsfeed.exception.customException.NotFoundUserException;
-import inxj.newsfeed.exception.customException.BaseException;
+import inxj.newsfeed.exception.customException.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -51,7 +48,7 @@ public class EntityFetcher {
 
     public Comment getCommentOrThrow(Long commentId) {
         return commentRepository.findById(commentId)
-                .orElseThrow(() -> new BaseException(ErrorCode.NOT_FOUND_COMMENT_ID));
+                .orElseThrow(NotFoundCommentIdException::new);
     }
 
     public CommentLike getCommentLikeOrThrow(CommentLikeId commentLikeId) {

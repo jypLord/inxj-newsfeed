@@ -4,12 +4,10 @@ import inxj.newsfeed.exception.ErrorCode;
 
 public class NotFoundCommentIdException extends BaseException{
 
-    ErrorCode errorCode;
 
-    public NotFoundCommentIdException(ErrorCode errorCode)
+    public NotFoundCommentIdException()
     {
-        super(errorCode);
-        this.errorCode=errorCode;
+        super(ErrorCode.NOT_FOUND_COMMENT_ID);
 
     }
 }
