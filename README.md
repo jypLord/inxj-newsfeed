@@ -10,7 +10,7 @@
 ### ✅ 주요 기능
 - **사용자, 게시글, 댓글의 CRUD** 기능을 지원합니다.
 - 게시글과 댓글에 **좋아요(❤️)** 를 남길 수 있습니다. 
-- 사용자는 다른 사용자를 **팔로우**하여 친구 목록에 추가할 수 있으며,  
+- 사용자는 다른 사용자에게 **친구 요청을 보내고, 상대방이 수락하면**하여 **친구 목록**에 추가할 수 있으며,  
   언제든지 친구 목록에서 **삭제**할 수 있습니다.
 
 <br><br>
@@ -32,11 +32,11 @@
 
 <table>
   <tr>
-    <td><img src="https://via.placeholder.com/100" width="100"></td>
-    <td><img src="https://via.placeholder.com/100" width="100"></td>
+    <td><img src="https://github.com/user-attachments/assets/0ceb06cb-3857-4c8f-85a8-cdb096b236b2" width="100"></td>
+    <td><img src="(https://github.com/user-attachments/assets/c735f29f-5b4d-426a-9848-5b9a7ea99383" width="100"></td>
     <td><img src="https://github.com/user-attachments/assets/e36d8960-d138-48af-8640-8d4969ad6a6c" width="100"></td>
-    <td><img src="https://via.placeholder.com/100" width="100"></td>
-    <td><img src="https://via.placeholder.com/100" width="100"></td>
+    <td><img src="https://github.com/user-attachments/assets/c8d4fc10-df57-4472-93bc-59bef24b863f)" width="100"></td>
+    <td><img src="https://github.com/user-attachments/assets/8e6252d5-8895-4f5c-a75a-75bcd537e70f" width="100"></td>
   </tr>
   <tr>
     <td><strong>팀장</strong><br>박준우<br><a href="https://github.com/jypLord" target="_blank">@jypLord</a></td>
@@ -78,9 +78,9 @@
 ---
 
 ### 📝 **Commit 컨벤션**
-- **헤더**: `영어`
+- **한글**: `영어`
 - **본문**: `한글`
-- 예시) Feat: 댓글 조회 기능 추가
+- 예시) 기능: 댓글 조회 기능 추가
 
 ---
 
@@ -109,28 +109,26 @@
 <br><br>
 
 ## 📂 프로젝트 구조
-```bash
-├─main
- └─java
-     └─ inxj
-         └─ 📁 newsfeed
-             ├─💬comment
-             │  ├─controller, dto, entity, repository, service
-             ├─🔧common
-             │  ├─annotation, config, dto, entity, enums, filter, util
-             ├─⚠️exception
-             ├─⚠️exceptionHandler
-             ├─🤝friend
-             │  ├─controller, dto, entity, repository, service
-             ├─❤️like
-             │  ├─controller, entity, repository, service
-             ├─✏️post
-             │  ├─controller, converter, dto, entity, initializer, repository, service
-             └─👤user
-                ├─controller, entity, repository, service
-                ├─dto
-                   ├─request
-                    └─response
+```bas      
+├─📁 newsfeed
+            └─ domain
+                   ├─💬comment
+                   │  ├─controller, dto, entity, repository, service
+                   ├─🔧common
+                   │  ├─annotation, config, dto, entity, enums, filter, util
+                   ├─⚠️exception 
+                   ├─⚠️exceptionHandler
+                   ├─🤝friend
+                   │  ├─controller, dto, entity, repository, service
+                   ├─❤️like
+                   │  ├─controller, entity, repository, service
+                   ├─✏️post
+                   │  ├─controller, converter, dto, entity, initializer, repository, service
+                   └─👤user
+                      ├─controller, entity, repository, service
+                      ├─dto
+                         ├─request
+                         └─response
 ```
 <br><br>
 
@@ -141,7 +139,7 @@
 ## 🛠 와이어 프레임
 ![figma](https://velog.velcdn.com/images/jiyun_im/post/a680b3fe-80f2-41f6-8ff3-74a354749477/image.png)
 
-#### [🔗ProtoType](https://www.figma.com/proto/yrCjbgRATpaDL1ohmQ94vn/INXJ-15%EC%A1%B0----%EB%89%B4%EC%8A%A4%ED%94%BC%EB%93%9C?node-id=13-2&t=FoeWFYWwnoYPTZeL-1)
+#### [🔗MockUp](https://www.figma.com/proto/yrCjbgRATpaDL1ohmQ94vn/INXJ-15%EC%A1%B0----%EB%89%B4%EC%8A%A4%ED%94%BC%EB%93%9C?node-id=13-2&t=FoeWFYWwnoYPTZeL-1)
 
 <br><br>
 
