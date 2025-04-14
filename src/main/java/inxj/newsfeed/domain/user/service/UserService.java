@@ -72,7 +72,7 @@ public class UserService {
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new BaseException(INVALID_EMAIL));
 
-        if (isPasswordValid(dto.getPassword(), user.getPassword())) {
+        if (isInvalidPassword(dto.getPassword(), user.getPassword())) {
             throw new BaseException(INVALID_PASSWORD);
         }
         if (user.getDeletedAt()==null) {
@@ -97,7 +97,7 @@ public class UserService {
     public void modifyProfile(Long id, UpdateProfileRequestDto dto) {
         User user = entityFetcher.getUserOrThrow(id);
 
-        if (isPasswordValid(dto.getPassword(), user.getPassword())) {
+        if (isInvalidPassword(dto.getPassword(), user.getPassword())) {
             throw new BaseException(INVALID_PASSWORD);
         }
 
@@ -124,7 +124,7 @@ public class UserService {
                     
         User user = entityFetcher.getUserOrThrow(id);
 
-        if (isPasswordValid(requestDto.getOldPassword(), user.getPassword())){
+        if (isInvalidPassword(requestDto.getOldPassword(), user.getPassword())){
             throw new BaseException(INVALID_PASSWORD);
         }
 
@@ -141,14 +141,14 @@ public class UserService {
     public void deactivateUser(Long id, DeactivateRequestDto dto) {
         User user = entityFetcher.getUserOrThrow(id);
 
-        if (isPasswordValid(dto.getPassword(), user.getPassword())) {
+        if (isInvalidPassword(dto.getPassword(), user.getPassword())) {
             throw new BaseException(INVALID_PASSWORD);
         }
 
         user.setDeletedAt(LocalDateTime.now());
     }
 
-    public boolean isPasswordValid(String rawPassword, String encodedPassword) {
+    public boolean isInvalidPassword(String rawPassword, String encodedPassword) {
         return !passwordEncoder.matches(rawPassword, encodedPassword);
     }
 
