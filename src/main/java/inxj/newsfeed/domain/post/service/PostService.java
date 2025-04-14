@@ -30,7 +30,6 @@ import java.util.List;
 public class PostService {
     private final PostCategoryService categoryService;
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
     private final FriendRepository friendRepository;
     private final EntityFetcher entityFetcher;
 
