@@ -44,12 +44,11 @@ public class UserService {
             throw new EmailConflictException();
         }
 
-        //TODO: CONFLICT_USERNAME 추가 요청후 변경
         if (userRepository.existsByUsername(dto.getUsername())) {
             throw new BaseException(ErrorCode.CONFLICT_STATUS);
         }
 
-        //TODO: CONFLICT_USERNAME 추가 요청후 변경
+
 
         //비밀번호 인코딩
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
