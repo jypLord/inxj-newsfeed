@@ -1,14 +1,11 @@
 package inxj.newsfeed.domain.user.controller;
 
 import inxj.newsfeed.domain.user.dto.request.*;
-import inxj.newsfeed.domain.user.dto.response.ChangePasswordResponseDto;
 import inxj.newsfeed.domain.user.dto.response.ProfileResponseDto;
 import inxj.newsfeed.domain.user.dto.response.SearchUsersResponseDto;
 import inxj.newsfeed.domain.user.service.UserService;
 import inxj.newsfeed.exception.ErrorCode;
 import inxj.newsfeed.exception.customException.BaseException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -68,7 +65,7 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/users/{id}/password")
+    @PatchMapping(value = "/users/{id}/password")
     public ResponseEntity<Void> modifyMyPassword(@PathVariable Long id,
                                                  @RequestBody ModifyPasswordRequestDto requestDto,
                                                  @SessionAttribute(LOGIN_USER) Long loginUserId) {

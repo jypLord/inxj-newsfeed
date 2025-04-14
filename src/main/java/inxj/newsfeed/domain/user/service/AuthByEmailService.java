@@ -27,8 +27,9 @@ import static inxj.newsfeed.exception.ErrorCode.INVALID_CODE;
 @Service
 @RequiredArgsConstructor
 public class AuthByEmailService {
-    private final JavaMailSender javaMailSender;
+
     private final UserRepository userRepository;
+    private final JavaMailSender javaMailSender;
     private final RedisTemplate<String,String> redisTemplate;
     private final SecurityConfig securityConfig;
 
@@ -39,7 +40,7 @@ public class AuthByEmailService {
 
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 
-        String ip=request.getRemoteAddr();
+//        String ip=request.getRemoteAddr();
 
         HttpSession session=request.getSession();
 
@@ -58,6 +59,7 @@ public class AuthByEmailService {
 
 
     }
+
     public String existEmail(AuthByEmailRequestDto dto){
         if (userRepository.existsByEmail(dto.getEmail())){
             return "회원가입된 이메일 입니다.";
@@ -65,9 +67,6 @@ public class AuthByEmailService {
             return "회원가입 가능한 이메일 입니다.";
         }
     }
-
-
-
 
     @Transactional
     public void findPassword(CheckingByEmailRequestDto dto){
