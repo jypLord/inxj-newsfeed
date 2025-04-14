@@ -64,7 +64,7 @@ public class CommentControl {
 
         commentService.deleteComment(loginUserId, commentId);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }
