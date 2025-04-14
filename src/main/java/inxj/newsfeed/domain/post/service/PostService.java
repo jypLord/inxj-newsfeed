@@ -63,9 +63,12 @@ public class PostService {
 
     // 모든 전체 공개 게시글 조회
     public List<PostResponseDto> findAllPublicPosts(int page, int size) {
+        int adjustedPage = (page > 0) ? page - 1 : 0;
+        PageRequest pageable = PageRequest.of(adjustedPage, size, Sort.by("createdAt").descending());
+
         // 전체 공개 게시글에 대하여 작성일자 내림차순 조회
-        List<Post> postList = postRepository.findAllByVisibility(Visibility.PUBLIC);
-        return postList.stream()
+        Page<Post> postPage = postRepository.findAllByVisibility(Visibility.PUBLIC, pageable);
+        return postPage.stream()
             .map(PostResponseDto::new).toList();
     }
 
