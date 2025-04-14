@@ -33,9 +33,9 @@
 <table>
   <tr>
     <td><img src="https://github.com/user-attachments/assets/0ceb06cb-3857-4c8f-85a8-cdb096b236b2" width="100"></td>
-    <td><img src="(https://github.com/user-attachments/assets/c735f29f-5b4d-426a-9848-5b9a7ea99383" width="100"></td>
+    <td><img src="https://github.com/user-attachments/assets/c735f29f-5b4d-426a-9848-5b9a7ea99383" width="100"></td>
     <td><img src="https://github.com/user-attachments/assets/e36d8960-d138-48af-8640-8d4969ad6a6c" width="100"></td>
-    <td><img src="https://github.com/user-attachments/assets/c8d4fc10-df57-4472-93bc-59bef24b863f)" width="100"></td>
+    <td><img src="https://github.com/user-attachments/assets/5fb947bd-d58f-488b-b0c8-7f46e945457c" width="100"></td>
     <td><img src="https://github.com/user-attachments/assets/8e6252d5-8895-4f5c-a75a-75bcd537e70f" width="100"></td>
   </tr>
   <tr>
