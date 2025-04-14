@@ -140,7 +140,7 @@ public class AuthByEmailService {
             Random random =SecureRandom.getInstanceStrong();
             StringBuilder builder=new StringBuilder();
             for (int i=0;i<length;i++){
-                builder.append(characters.charAt(random.nextInt(characters.length()+1)));
+                builder.append(characters.charAt(random.nextInt(characters.length())));
             }
             return builder.toString();
         } catch (NoSuchAlgorithmException e) {
