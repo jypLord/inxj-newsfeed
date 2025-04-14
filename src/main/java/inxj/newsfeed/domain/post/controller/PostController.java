@@ -42,27 +42,35 @@ public class PostController {
   // 조건: 전체, 카테고리
   @GetMapping
   public ResponseEntity<List<PostResponseDto>> findAllPublicPosts(
-      @RequestParam(name = "categoryType", required = false) List<String> categoryTypeList) {
+      @RequestParam(name = "categoryType", required = false) List<String> categoryTypeList,
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "10") int size) {
     if(categoryTypeList == null || categoryTypeList.isEmpty()) {
-      return new ResponseEntity<>(postService.findAllPublicPosts(), HttpStatus.OK);
+      return new ResponseEntity<>(postService.findAllPublicPosts(page, size), HttpStatus.OK);
     }
     else {
-      return new ResponseEntity<>(postService.findAllPublicPostsByCategories(categoryTypeList), HttpStatus.OK);
+      return new ResponseEntity<>(postService.findAllPublicPostsByCategories(categoryTypeList, page, size), HttpStatus.OK);
     }
   }
 
   // 모든 친구 공개 게시글 조회
   @GetMapping("/friends")
-  public ResponseEntity<List<PostResponseDto>> findAllFriendPosts(@SessionAttribute(LOGIN_USER) Long loginUserId) {
+  public ResponseEntity<List<PostResponseDto>> findAllFriendPosts(
+      @SessionAttribute(LOGIN_USER) Long loginUserId,
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "10") int size) {
 
-    return new ResponseEntity<>(postService.findAllFriendPosts(loginUserId), HttpStatus.OK);
+    return new ResponseEntity<>(postService.findAllFriendPosts(loginUserId, page, size), HttpStatus.OK);
   }
 
   // 사용자의 모든 게시글 조회
   @GetMapping("/users/{targetUserId}")
-  public ResponseEntity<List<PostResponseDto>> findAllByUser(@PathVariable Long targetUserId, @SessionAttribute(LOGIN_USER) Long loginUserId) {
+  public ResponseEntity<List<PostResponseDto>> findAllByUser(
+      @PathVariable Long targetUserId, @SessionAttribute(LOGIN_USER) Long loginUserId,
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "10") int size) {
 
-    return new ResponseEntity<>(postService.findAllUserPosts(targetUserId, loginUserId), HttpStatus.OK);
+    return new ResponseEntity<>(postService.findAllUserPosts(targetUserId, loginUserId, page, size), HttpStatus.OK);
   }
 
   // 게시글 수정

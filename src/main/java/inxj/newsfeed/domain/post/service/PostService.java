@@ -14,6 +14,9 @@ import inxj.newsfeed.domain.user.repository.UserRepository;
 import inxj.newsfeed.exception.customException.BaseException;
 import inxj.newsfeed.exception.customException.ForbiddenPostException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,7 +62,7 @@ public class PostService {
     }
 
     // 모든 전체 공개 게시글 조회
-    public List<PostResponseDto> findAllPublicPosts() {
+    public List<PostResponseDto> findAllPublicPosts(int page, int size) {
         // 전체 공개 게시글에 대하여 작성일자 내림차순 조회
         List<Post> postList = postRepository.findAllByVisibility(Visibility.PUBLIC);
         return postList.stream()
@@ -67,7 +70,9 @@ public class PostService {
     }
 
     // 모든 친구 공개 게시글 조회
-    public List<PostResponseDto> findAllFriendPosts(Long loginId) {
+    public List<PostResponseDto> findAllFriendPosts(Long loginId, int page, int size) {
+        int adjustedPage = (page > 0) ? page - 1 : 0;
+        PageRequest pageable = PageRequest.of(adjustedPage, size, Sort.by("createdAt").descending());
         User user = entityFetcher.getUserOrThrow(loginId); // 사용자 찾기
 
         // 친구 목록 조회
@@ -77,19 +82,21 @@ public class PostService {
             .toList();
 
         // 친구인 사용자들의 모든 친구 공개 게시글 조회
-        List<Post> postList = postRepository.findAllFriendVisible(Visibility.FRIENDS, friendList);
-        return postList.stream()
+        Page<Post> postPage= postRepository.findAllFriendVisible(Visibility.FRIENDS, friendList, pageable);
+        return postPage.stream()
             .map(PostResponseDto::new).toList();
     }
 
     // 사용자의 모든 게시글 조회
-    public List<PostResponseDto> findAllUserPosts(Long targetUserId, Long loginId) {
-        List<Post> postList;
+    public List<PostResponseDto> findAllUserPosts(Long targetUserId, Long loginId, int page, int size) {
+        int adjustedPage = (page > 0) ? page - 1 : 0;
+        PageRequest pageable = PageRequest.of(adjustedPage, size, Sort.by("createdAt").descending());
+        Page<Post> postPage;
         User targetUser = entityFetcher.getUserOrThrow(targetUserId);
 
         // 자신의 모든 게시글을 조회
         if (targetUserId.equals(loginId)) {
-            postList = postRepository.findAllByUser(targetUser);
+            postPage = postRepository.findAllByUser(targetUser, pageable);
         }
         // 다른 유저의 모든 게시글을 조회
         else {
@@ -101,27 +108,30 @@ public class PostService {
 
             // 친구라면 전체 공개와 친구 공개 게시글 조회
             if (friendList.contains(targetUser)) {
-                postList = postRepository.findAllByUser(targetUser);
+                postPage = postRepository.findAllByUser(targetUser, pageable);
             }
             // 전체 공개 게시글만 조회
             else {
-                postList = postRepository.findAllByUserAndVisibility(targetUser, Visibility.PUBLIC);
+                postPage = postRepository.findAllByUserAndVisibility(targetUser, Visibility.PUBLIC, pageable);
             }
         }
 
-        return postList.stream()
+        return postPage.stream()
             .map(PostResponseDto::new).toList();
     }
 
     // 모든 전체 공개 게시글을 카테고리 별로 조회
-    public List<PostResponseDto> findAllPublicPostsByCategories(List<String> categoryTypeList) {
+    public List<PostResponseDto> findAllPublicPostsByCategories(List<String> categoryTypeList, int page, int size) {
+        int adjustedPage = (page > 0) ? page - 1 : 0;
+        PageRequest pageable = PageRequest.of(adjustedPage, size, Sort.by("createdAt").descending());
+
         // CategoryType 중복값은 JPA IN 쿼리에서 자동으로 무시
         List<Category> categoryList = categoryService.getCategoryByTypeString(categoryTypeList); // CategoryType --> Category 변환
 
         // 모든 전체 공개 게시글을 카테고리 별로 조회
-        List<Post> postList = postRepository.findAllByCategoryAndVisibility(Visibility.PUBLIC, categoryList);
+        Page<Post> postPage = postRepository.findAllByCategoryAndVisibility(Visibility.PUBLIC, categoryList, pageable);
 
-        return postList.stream()
+        return postPage.stream()
             .map(PostResponseDto::new).toList();
     }
 
