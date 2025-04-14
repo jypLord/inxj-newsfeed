@@ -16,6 +16,7 @@ import inxj.newsfeed.domain.post.repository.PostRepository;
 import inxj.newsfeed.domain.user.entity.User;
 import inxj.newsfeed.domain.user.repository.UserRepository;
 import inxj.newsfeed.exception.customException.FriendRequestAlreadyHandledException;
+import inxj.newsfeed.exception.customException.NotFoundPostException;
 import inxj.newsfeed.exception.customException.NotFoundUserException;
 import inxj.newsfeed.exception.customException.BaseException;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +46,7 @@ public class EntityFetcher {
 
     public PostLike getPostLikeOrThrow(PostLikeId postLikeId) {
         return postLikeRepository.findById(postLikeId)
-                .orElseThrow(() -> new BaseException(ErrorCode.NOT_FOUND_LIKE_ID));
+                .orElseThrow(NotFoundPostException::new);
     }
 
     public Comment getCommentOrThrow(Long commentId) {
